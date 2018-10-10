@@ -8,9 +8,34 @@ class ComputerTest < Minitest::Test
     @computer = Computer.new(@board)
   end
 
-  def test_it_generates_start_coordinate_length_of_two
+  def test_it_generates_start_coordinate_length_of_two_horizontal
+    letter, number = @computer.generate_start_coordinate(:H, 2)
 
+    assert /[ABCD]/ =~ letter
+    assert /[123]/ =~ number.to_s
   end
+
+  def test_it_generates_start_coordinate_length_of_two_vertical
+    letter, number = @computer.generate_start_coordinate(:V, 2)
+
+    assert /[ABC]/ =~ letter
+    assert /[1-4]/ =~ number.to_s
+  end
+
+  def test_it_generates_start_coordinate_length_of_three_horizontal
+    letter, number = @computer.generate_start_coordinate(:H, 3)
+
+    assert /[ABCD]/ =~ letter
+    assert /[12]/ =~ number.to_s
+  end
+
+  def test_it_generates_start_coordinate_length_of_three_vertical
+    letter, number = @computer.generate_start_coordinate(:V, 3)
+
+    assert /[AB]/ =~ letter
+    assert /[1-4]/ =~ number.to_s
+  end
+
   def test_it_generates_coordinates_for_horizontal_placement_length_two_row_a
     assert_equal ["A1", "A2"], @computer.generate_coordinates("A", 1, :H, 2)
   end
