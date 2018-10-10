@@ -39,4 +39,8 @@ class ComputerTest < Minitest::Test
   def test_it_generates_coordinates_for_vertical_placement_length_three_column_2
     assert_equal ["A2", "B2", "C2"], @computer.generate_coordinates("A", 2, :V, 3)
   end
+
+  def test_it_validates_a_single_coordinate
+
+  end
 end
