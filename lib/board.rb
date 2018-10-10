@@ -1,9 +1,10 @@
 class Board
+  attr_reader :size
   def initialize(size = 4)
     @owner = nil
     @size = size
     @board_info = {
-      a: [' ',' ',' ',' '],
+      a: [' ',' ',' '," "],
       b: [' ',' ',' ',' '],
       c: [' ',' ',' ',' '],
       d: [' ',' ',' ',' ']
