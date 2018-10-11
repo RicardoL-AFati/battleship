@@ -17,23 +17,13 @@ class Computer
     direction = [:H, :V][rand(2)]
     letter, number = generate_start_coordinate(direction, ship_length)
     if previous_ship
-
+      get_coordinates(ship_length, true) if not valid_coordinate?(letter.to_sym, number)
+      coordinates = generate_coordinates(letter, number, direction, ship_length)
+      get_coordinates(ship_length, true) if not valid_coordinates?(letter.to_sym, number)
     else
-
+      coordinates = generate_coordinates(letter, number, direction, ship_length)
     end
-    coordinates = generate_coordinates(letter, number, direction, ship_length)
-  end
-
-  def valid_coordinate?(letter, number)
-    @board_info[letter][number] != "\u{26F5}"
-  end
-
-  def valid_coordinates?(coordinates)
-    is_valid = coordinates.reduce(true) do |valid, coordinate|
-      letter, number = coordinate.split("")
-      valid = false if not valid_coordinate?(letter.to_sym, number.to_i)
-      valid
-    end
+    coordinates
   end
 
   def generate_start_coordinate(direction, ship_length)
@@ -70,6 +60,18 @@ class Computer
   def generate_random_number(ship_length)
     number_constraint = @board.size - ship_length + 1
     number = rand(number_constraint) + 1
+  end
+
+  def valid_coordinate?(letter, number)
+    @board_info[letter][number] != "\u{26F5}"
+  end
+
+  def valid_coordinates?(coordinates)
+    is_valid = coordinates.reduce(true) do |valid, coordinate|
+      letter, number = coordinate.split("")
+      valid = false if not valid_coordinate?(letter.to_sym, number.to_i)
+      valid
+    end
   end
 end
 
