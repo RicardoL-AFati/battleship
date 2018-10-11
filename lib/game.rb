@@ -15,7 +15,6 @@ class Game
     #   play
     # end
     play
-
   end
 
   def play

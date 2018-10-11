@@ -3,6 +3,7 @@ require './lib/board'
 
 class Computer
   LETTERS = ["A","B","C","D"]
+  attr_reader :board
   def initialize(board)
     @board = board
     @shot_history = []
@@ -19,7 +20,7 @@ class Computer
     if previous_ship
       get_coordinates(ship_length, true) if not valid_coordinate?(letter.to_sym, number)
       coordinates = generate_coordinates(letter, number, direction, ship_length)
-      get_coordinates(ship_length, true) if not valid_coordinates?(letter.to_sym, number)
+      get_coordinates(ship_length, true) if not valid_coordinates?(coordinates)
     else
       coordinates = generate_coordinates(letter, number, direction, ship_length)
     end
@@ -63,7 +64,7 @@ class Computer
   end
 
   def valid_coordinate?(letter, number)
-    @board_info[letter][number] != "\u{26F5}"
+    @board.board_info[letter][number - 1] != "\u{26F5}"
   end
 
   def valid_coordinates?(coordinates)
