@@ -18,11 +18,33 @@ class Computer
     direction = [:H, :V][rand(2)]
     letter, number = generate_start_coordinate(direction, ship_length)
     if previous_ship
-      get_coordinates(ship_length, true) if not valid_coordinate?(letter.to_sym, number)
+      if not valid_coordinate?(letter.to_sym, number)
+        letter, number = generate_valid_start_coordinate(direction, ship_length)
+      end
       coordinates = generate_coordinates(letter, number, direction, ship_length)
-      get_coordinates(ship_length, true) if not valid_coordinates?(coordinates)
+      if not valid_coordinates?(coordinates)
+        coordinates = generate_valid_coordinates(ship_length)
+      end
     else
       coordinates = generate_coordinates(letter, number, direction, ship_length)
+    end
+    coordinates
+  end
+
+  def generate_valid_start_coordinate(direction, ship_length)
+    valid = false
+    until valid
+      letter, number = generate_start_coordinate(direction, ship_length)
+      valid = valid_coordinate?(letter.to_sym, number)
+    end
+    return letter, number
+  end
+
+  def generate_valid_coordinates(letter, number, direction, ship_length)
+    valid = false
+    until valid
+      coordinates = generate_coordinates(letter, number, direction, ship_length)
+      valid = valid_coordinates?(coordinates)
     end
     coordinates
   end
