@@ -3,6 +3,7 @@ require './lib/board'
 
 class Computer
   LETTERS = ["A","B","C","D"]
+  DIRECTIONS = [:H, :V]
   attr_reader :board
   def initialize(board)
     @board = board
@@ -15,15 +16,16 @@ class Computer
   end
 
   def get_coordinates(ship_length, previous_ship = false)
-    direction = [:H, :V][rand(2)]
+    direction = DIRECTIONS[rand(2)]
     letter, number = generate_start_coordinate(direction, ship_length)
+    puts "#{direction} #{letter} #{number}"
     if previous_ship
       if not valid_coordinate?(letter.to_sym, number)
-        letter, number = generate_valid_start_coordinate(direction, ship_length)
+        letter, number = generate_valid_start_coordinate(ship_length)
       end
       coordinates = generate_coordinates(letter, number, direction, ship_length)
       if not valid_coordinates?(coordinates)
-        coordinates = generate_valid_coordinates(ship_length)
+        coordinates = generate_valid_coordinates(letter, number, direction, ship_length)
       end
     else
       coordinates = generate_coordinates(letter, number, direction, ship_length)
@@ -31,13 +33,15 @@ class Computer
     coordinates
   end
 
-  def generate_valid_start_coordinate(direction, ship_length)
+  def generate_valid_start_coordinate(ship_length)
     valid = false
     until valid
+      direction = DIRECTIONS[rand(2)]
       letter, number = generate_start_coordinate(direction, ship_length)
+      puts "coordinates: #{letter} #{number}"
       valid = valid_coordinate?(letter.to_sym, number)
     end
-    return letter, number
+    return letter, number, direction
   end
 
   def generate_valid_coordinates(letter, number, direction, ship_length)

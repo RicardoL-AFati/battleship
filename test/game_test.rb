@@ -22,7 +22,6 @@ class GameTest < Minitest::Test
     end
 
     mocked_method.verify
-    # binding.pry
   end
 
   def test_it_shows_prompts

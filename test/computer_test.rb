@@ -29,18 +29,27 @@ class ComputerTest < Minitest::Test
   end
 
   def test_it_gets_coordinates_length_of_three_previous_ship
+    skip
     @board.board_info = {
-      A: ["\u{26F5}","\u{26F5}","\u{26F5}","\u{26F5}"],
-      B: ["\u{26F5}","\u{26F5}"," ","\u{26F5}"],
-      C: ["\u{26F5}","\u{26F5}"," ","\u{26F5}"],
-      D: ["\u{26F5}","\u{26F5}"," ","\u{26F5}"]
+      A: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
+      B: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
+      C: ["\u{26F5}","\u{26F5}","\u{26F5}","\u{26F5}"],
+      D: ["\u{26F5}","\u{26F5}","\u{26F5}","\u{26F5}"]
     }
-    coordinates = @computer.get_coordinates(3, true)
+    coordinates = @computer.get_coordinates(2, true)
+    assert_equal ["A1", "B1"], coordinates
   end
 
-  # def test_it_gets_coordinates_length_of_three_previous_ship
-  #
-  # end
+  def test_it_gets_coordinates_length_of_two_previous_ship
+    @board.board_info = {
+      A: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
+      B: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
+      C: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
+      D: ["\u{26F5}","\u{26F5}","\u{26F5}","\u{26F5}"]
+    }
+    coordinates = @computer.get_coordinates(3, true)
+    assert_equal ["A1", "B1", "C1"], coordinates
+  end
 
   def test_it_generates_start_coordinate_length_of_two_horizontal
     letter, number = @computer.generate_start_coordinate(:H, 2)
