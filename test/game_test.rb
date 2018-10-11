@@ -14,6 +14,16 @@ class GameTest < Minitest::Test
     assert_instance_of Game, @game
   end
 
+  def test_start_game_calls_play_if_valid_input_p
+    mocked_method = MiniTest::Mock.new
+    mocked_method.expect :call, 4
+    @game.stub :play, mocked_method do
+      @game.start_game
+    end
+
+    mocked_method.verify
+    # binding.pry
+  end
 
   def test_it_shows_prompts
     expected = "#{Prompts::WELCOME}\n#{Prompts::START}> "

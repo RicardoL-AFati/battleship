@@ -9,14 +9,16 @@ class Game
   end
 
   def start_game
-    show_start_prompt
-    choice = gets.chomp
-    if choice == "p"
-      play
-    end
+    # show_start_prompt
+    # choice = gets.chomp
+    # if choice == "p"
+    #   play
+    # end
+    play
+
   end
 
   def play
-    puts "Playing game"
+    4
   end
 end
