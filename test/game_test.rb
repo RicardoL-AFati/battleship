@@ -32,20 +32,141 @@ class GameTest < Minitest::Test
 
   def test_it_runs_and_calls_play_on_p_input
     io = StringIO.new
-    io.puts "play"
+    io.puts "p"
     io.rewind
     $stdin = io
 
     @mocked_method.expect :call, nil
-    @game.stub :play, mocked_method do
+    @game.stub :play, @mocked_method do
       @game.run
     end
 
     $stdin = STDIN  
 
-    mocked_method.verify
+    @mocked_method.verify
+  end
+
+  def test_it_runs_and_calls_play_on_play_input
+    io = StringIO.new
+    io.puts "play"
+    io.rewind
+    $stdin = io
+
+    @mocked_method.expect :call, nil
+    @game.stub :play, @mocked_method do
+      @game.run
+    end
+
+    $stdin = STDIN  
+
+    @mocked_method.verify
+  end
+
+  def test_it_runs_and_calls_show_instructions_on_i_input
+    io = StringIO.new
+    io.puts "i"
+    io.rewind
+    $stdin = io
+
+    @mocked_method.expect :call, nil
+    @game.stub :show_instructions, @mocked_method do
+      @game.run
+    end
+
+    $stdin = STDIN  
+
+    @mocked_method.verify
+  end
+
+  def test_it_runs_and_calls_show_instructions_on_instructions_input
+    io = StringIO.new
+    io.puts "instructions"
+    io.rewind
+    $stdin = io
+
+    @mocked_method.expect :call, nil
+    @game.stub :show_instructions, @mocked_method do
+      @game.run
+    end
+
+    $stdin = STDIN  
+
+    @mocked_method.verify
+  end
+
+  def test_it_runs_and_calls_quit_on_q_input
+    io = StringIO.new
+    io.puts "q"
+    io.rewind
+    $stdin = io
+
+    @mocked_method.expect :call, nil
+    @game.stub :quit, @mocked_method do
+      @game.run
+    end
+
+    $stdin = STDIN  
+
+    @mocked_method.verify
+  end
+
+  def test_it_runs_and_calls_quit_on_quit_input
+    io = StringIO.new
+    io.puts "quit"
+    io.rewind
+    $stdin = io
+
+    @mocked_method.expect :call, nil
+    @game.stub :quit, @mocked_method do
+      @game.run
+    end
+
+    $stdin = STDIN  
+
+    @mocked_method.verify
+  end
+
+  # def test_play_calls_other_methods
+  #   mocked_place_all_ships = MiniTest::Mock.new
+  #   mocked_player_shot_sequence = MiniTest::Mock.new
+  #   mocked_computer_shot_sequence = MiniTest::Mock.new
+
+  #   mocked_place_all_ships.expect :call, nil
+  #   @game.stub :place_all_ships, mocked_place_all_ships do
+  #     @game.play
+  #   end
+
+  #   mocked_place_all_ships.verify
+
+  #   mocked_player_shot_sequence.expect :call, nil
+  #   @game.stub :player_shot_sequence, mocked_player_shot_sequence do
+  #     @game.play
+  #   end
+
+  #   mocked_player_shot_sequence.verify
+    
+  #   mocked_computer_shot_sequence.expect :call, nil
+  #   @game.stub :computer_shot_sequence, mocked_computer_shot_sequence do
+  #     @game.play
+  #   end
+    
+  #   mocked_computer_shot_sequence.verify
+  # end
+
+  def test_it_shows_instructions
+    result, stdout, stderr = OStreamCatcher.catch do
+      @game.show_instructions
+    end
+    assert_equal stdout, "#{Prompts::INSTRUCTIONS}\n"
   end
   
+  def test_it_quits
+    result, stdout, stderr = OStreamCatcher.catch do
+      @game.quit
+    end
+    assert_equal stdout, "k bai \u{1F630}\n"
+  end
+
   def test_it_shows_prompts
     expected = "#{Prompts::WELCOME}\n#{Prompts::START}> "
     assert_equal expected, @game.show_start_prompt
