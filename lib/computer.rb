@@ -12,6 +12,12 @@ class Computer
     @board.add_owner(self)
   end
 
+  def place_ships
+    ship_1_coordinates = get_coordinates(2)
+    ship_2_coordinates = get_coordinates(3)
+    @board.create_ships(ship_1_coordinates, ship_2_coordinates)
+  end
+
   def get_coordinates(ship_length)
     valid_positions = find_valid_positions
     valid_coordinates = false

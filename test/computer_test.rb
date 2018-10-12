@@ -9,6 +9,11 @@ class ComputerTest < Minitest::Test
     @valid_positions = ["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "D1", "D2", "D3", "D4"]
   end
 
+  def test_it_gets_ship_coordinates_and_passes_to_board_for_creation
+    skip
+    #integration test
+  end
+
   def test_it_gets_coordinates_length_of_two_no_previous_ship
     coordinates = @computer.get_coordinates(2)
 
