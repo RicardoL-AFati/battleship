@@ -1,6 +1,3 @@
-require 'pry'
-require './lib/board'
-
 class Computer
   LETTERS = ["A","B","C","D"]
   DIRECTIONS = [:H, :V]
@@ -15,94 +12,56 @@ class Computer
     @board.add_owner(self)
   end
 
-  def get_coordinates(ship_length, previous_ship = false)
-    direction = DIRECTIONS[rand(2)]
-    letter, number = generate_start_coordinate(direction, ship_length)
-    puts "#{direction} #{letter} #{number}"
-    if previous_ship
-      if not valid_coordinate?(letter.to_sym, number)
-        letter, number = generate_valid_start_coordinate(ship_length)
-      end
-      coordinates = generate_coordinates(letter, number, direction, ship_length)
-      if not valid_coordinates?(coordinates)
-        coordinates = generate_valid_coordinates(letter, number, direction, ship_length)
-      end
-    else
-      coordinates = generate_coordinates(letter, number, direction, ship_length)
-    end
-    coordinates
-  end
-
-  def generate_valid_start_coordinate(ship_length)
-    valid = false
-    until valid
+  def get_coordinates(ship_length)
+    valid_positions = find_valid_positions
+    valid_coordinates = false
+    until valid_coordinates
       direction = DIRECTIONS[rand(2)]
-      letter, number = generate_start_coordinate(direction, ship_length)
-      puts "coordinates: #{letter} #{number}"
-      valid = valid_coordinate?(letter.to_sym, number)
+      letter, number = generate_start_coordinate(direction, ship_length, valid_positions)
+      valid_coordinates = generate_other_coordinates(letter, number, direction, ship_length, valid_positions)
     end
-    return letter, number, direction
+    valid_coordinates
   end
 
-  def generate_valid_coordinates(letter, number, direction, ship_length)
-    valid = false
-    until valid
-      coordinates = generate_coordinates(letter, number, direction, ship_length)
-      valid = valid_coordinates?(coordinates)
-    end
-    coordinates
+  def generate_start_coordinate(direction, ship_length, valid_positions)
+     if direction == :H
+       coordinates = valid_positions.select do |position|
+         letter, number = position.split('')
+         number.to_i <= (@board.size - ship_length) + 1
+       end
+     else
+       coordinates = valid_positions.select do |position|
+         letter, number = position.split('')
+         LETTERS[0..(@board.size - ship_length)].include?(letter)
+       end
+     end
+     letter, number = coordinates[rand(coordinates.count)].split("")
+     return letter, number.to_i
   end
 
-  def generate_start_coordinate(direction, ship_length)
-    if direction == :H
-      letter = LETTERS[rand(4)]
-      number = generate_random_number(ship_length)
-    else
-      number = rand(4) + 1
-      letter = generate_random_letter(ship_length)
-    end
-    return letter, number
-  end
-
-  def generate_coordinates(letter, number, direction, ship_length)
+  def generate_other_coordinates(letter, number, direction, ship_length, valid_positions)
     letter_start_index = LETTERS.index(letter)
     coordinates = ["#{letter}#{number}"]
-    (1..ship_length - 1).each do |i|
+    (1..ship_length - 1).each do
       if direction == :H
         number += 1
-        coordinates << "#{letter}#{number}"
+        coordinate = "#{letter}#{number}"
       else
         letter = LETTERS[letter_start_index += 1]
-        coordinates << "#{letter}#{number}"
+        coordinate = "#{letter}#{number}"
       end
+      return false if not valid_positions.include?(coordinate)
+      coordinates << coordinate
     end
     coordinates
   end
-
-  def generate_random_letter(ship_length)
-    letter_constraint = @board.size - ship_length
-    letter = LETTERS[rand(letter_constraint)]
-  end
-
-  def generate_random_number(ship_length)
-    number_constraint = @board.size - ship_length + 1
-    number = rand(number_constraint) + 1
-  end
-
-  def valid_coordinate?(letter, number)
-    @board.board_info[letter][number - 1] != "\u{26F5}"
-  end
-
-  def valid_coordinates?(coordinates)
-    is_valid = coordinates.reduce(true) do |valid, coordinate|
-      letter, number = coordinate.split("")
-      valid = false if not valid_coordinate?(letter.to_sym, number.to_i)
+  
+  def find_valid_positions
+    @board.board_info.reduce([]) do |valid, (row,spots)|
+      spots.each_with_index do |spot, index|
+        valid << "#{row}#{index + 1}" if spot == " "
+      end
       valid
     end
   end
 end
-
-board = Board.new
-apple = Computer.new(board)
-
-apple.get_coordinates(3)
