@@ -15,7 +15,8 @@ class Computer
   def place_ships
     ship_1_coordinates = get_coordinates(2)
     ship_2_coordinates = get_coordinates(3)
-    @board.create_ships(ship_1_coordinates, ship_2_coordinates)
+    @board.create_ship(ship_1_coordinates)
+    @board.create_ship(ship_2_coordinates)
   end
 
   def get_coordinates(ship_length)
