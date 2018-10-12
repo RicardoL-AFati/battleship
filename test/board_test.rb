@@ -20,9 +20,9 @@ class BoardTest < Minitest::Test
     assert_instance_of Computer, @board.owner
   end
 
-  def test_it_can_create_ships
-    @board.create_ships(["A1", "A2"], ["B2", "B3", "B4"])
-    expected = {:A=>["\u{26F5}", "\u{26F5}", " ", " "], :B=>[" ", "\u{26F5}", "\u{26F5}", "\u{26F5}"], :C=>[" ", " ", " ", " "], :D=>[" ", " ", " ", " "]}
+  def test_it_can_create_ship
+    @board.create_ship(["A1", "A2"])
+    expected = {:A=>["⛵", "⛵", " ", " "], :B=>[" ", " ", " ", " "], :C=>[" ", " ", " ", " "], :D=>[" ", " ", " ", " "]}
 
     assert_equal expected, @board.board_info
   end
