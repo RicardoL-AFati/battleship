@@ -21,7 +21,7 @@ class BoardTest < Minitest::Test
   end
 
   def test_it_can_create_ship
-    @board.create_ships(["A1", "A2"])
+    @board.create_ship(["A1", "A2"])
     expected = {:A=>["⛵", "⛵", " ", " "], :B=>[" ", " ", " ", " "], :C=>[" ", " ", " ", " "], :D=>[" ", " ", " ", " "]}
 
     assert_equal expected, @board.board_info
