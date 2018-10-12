@@ -20,18 +20,34 @@ class Game
   end
 
   def run
-    show_start_prompt
+    # puts show_start_prompt
     input = gets.chomp
     sanitized_input = input.downcase
     play if sanitized_input == "p" || sanitized_input == "play"
-    
-
+    show_instructions if sanitized_input == "i" || sanitized_input == "instructions"
+    quit if sanitized_input == "q" || sanitized_input == "quit"
   end
 
   def play
     place_all_ships
     player_shot_sequence
     computer_shot_sequence
+  end
+
+  def show_instructions
+    puts Prompts::INSTRUCTIONS
+  end
+
+  def quit
+    puts "k bai \u{1F630}"
+  end
+
+  def player_shot_sequence
+    
+  end
+
+  def computer_shot_sequence
+    
   end
 
   def place_all_ships
