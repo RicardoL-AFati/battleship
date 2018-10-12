@@ -1,7 +1,7 @@
 require './test/test_helper'
 require './lib/computer'
 require './lib/board'
-require 'pry'
+
 class ComputerTest < Minitest::Test
   def setup
     @board = Board.new
@@ -30,12 +30,14 @@ class ComputerTest < Minitest::Test
   end
 
   def test_it_gets_coordinates_length_of_three_previous_ship
+
     @board.board_info = {
       A: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
       B: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
       C: ["\u{26F5}","\u{26F5}","\u{26F5}","\u{26F5}"],
       D: ["\u{26F5}","\u{26F5}","\u{26F5}","\u{26F5}"]
     }
+
     coordinates = @computer.get_coordinates(2)
     assert_equal ["A1", "B1"], coordinates
   end
@@ -58,6 +60,7 @@ class ComputerTest < Minitest::Test
       C: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
       D: ["\u{26F5}","\u{26F5}","\u{26F5}","\u{26F5}"]
     }
+    
     coordinates = @computer.get_coordinates(3)
     assert_equal ["A1", "B1", "C1"], coordinates
   end
@@ -82,6 +85,7 @@ class ComputerTest < Minitest::Test
 
   def test_it_generates_start_coordinate_length_of_two_vertical
     letter, number = @computer.generate_start_coordinate(:V, 2, @valid_positions)
+
 
     assert (/[ABC]/) =~ letter
     assert (/[1-4]/) =~ number.to_s

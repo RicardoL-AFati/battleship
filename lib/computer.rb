@@ -55,7 +55,7 @@ class Computer
     end
     coordinates
   end
-
+  
   def find_valid_positions
     @board.board_info.reduce([]) do |valid, (row,spots)|
       spots.each_with_index do |spot, index|
