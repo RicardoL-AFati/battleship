@@ -1,6 +1,3 @@
-require 'pry'
-require './lib/board'
-
 class Computer
   LETTERS = ["A","B","C","D"]
   DIRECTIONS = [:H, :V]
@@ -15,7 +12,7 @@ class Computer
     @board.add_owner(self)
   end
 
-  def get_coordinates(ship_length, previous_ship = false)
+  def get_coordinates(ship_length)
     valid_positions = find_valid_positions
     valid_coordinates = false
     until valid_coordinates
@@ -39,6 +36,7 @@ class Computer
        end
      end
      letter, number = coordinates[rand(coordinates.count)].split("")
+     return letter, number.to_i
   end
 
   def generate_other_coordinates(letter, number, direction, ship_length, valid_positions)
@@ -59,14 +57,11 @@ class Computer
   end
 
   def find_valid_positions
-    valid_positions = []
-    @board.board_info.each do |key, values|
-      values.each_with_index do |value, index|
-        if value == " "
-          valid_positions << "#{key}#{index + 1}"
-        end
+    @board.board_info.reduce([]) do |valid, (row,spots)|
+      spots.each_with_index do |spot, index|
+        valid << "#{row}#{index + 1}" if spot == " "
       end
+      valid
     end
-    valid_positions
   end
 end
