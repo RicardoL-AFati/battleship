@@ -41,8 +41,9 @@ class PlayerTest < Minitest::Test
     refute @player.valid_choice?(bad_choice) 
   end
   
-  def test_it_can_place_ships
-    skip
+  def test_it_can_place_a_ship
+    @player.place_ship(['A1', 'B1'])
+    require 'pry'; binding.pry
     #integration test
   end
 

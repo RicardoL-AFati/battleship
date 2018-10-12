@@ -11,6 +11,7 @@ require 'pry'
 class GameTest < Minitest::Test
   def setup
     @game = Game.new
+    @mocked_method = MiniTest::Mock.new
   end
 
   def test_it_exists
@@ -29,20 +30,22 @@ class GameTest < Minitest::Test
     refute_equal @game.player.board, @game.watson.board
   end
 
-  def it_places_player_ships_when_play_runs
-    @game.play
+  def test_it_runs_and_calls_play_on_p_input
+    io = StringIO.new
+    io.puts "play"
+    io.rewind
+    $stdin = io
+
+    @mocked_method.expect :call, nil
+    @game.stub :play, mocked_method do
+      @game.run
+    end
+
+    $stdin = STDIN  
+
+    mocked_method.verify
   end
-
-  def test_start_game_calls_play_if_valid_input_p
-    # mocked_method = MiniTest::Mock.new
-    # mocked_method.expect :call, 4
-    # @game.stub :play, mocked_method do
-    #   @game.start_game
-    # end
-
-    # mocked_method.verify
-  end
-
+  
   def test_it_shows_prompts
     expected = "#{Prompts::WELCOME}\n#{Prompts::START}> "
     assert_equal expected, @game.show_start_prompt

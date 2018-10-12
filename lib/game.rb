@@ -19,27 +19,32 @@ class Game
     start_prompt
   end
 
-  def start_game
-    # show_start_prompt
-    # choice = gets.chomp
-    # if choice == "p"
-    #   play
-    # end
-    play
+  def run
+    show_start_prompt
+    input = gets.chomp
+    sanitized_input = input.downcase
+    play if sanitized_input == "p" || sanitized_input == "play"
+    
+
   end
 
   def play
+    place_all_ships
+    player_shot_sequence
+    computer_shot_sequence
+  end
+
+  def place_all_ships
     @watson.place_ships
-    # show_player_turn_promt(2)
-    ship_1 = get_player_ship_coordinates(2)
-    ship_2 = get_player_ship_coordinates(3)
+    ship_1 = get_player_ship_coordinates('two')
+    ship_2 = get_player_ship_coordinates('three')
     @player.place_ship(ship_1)
     @player.place_ship(ship_2)
-    render_player_shot_board
+    Prompts.print_empty_board
   end
 
   def get_player_ship_coordinates(length)
-    p "Place #{length} length ship"
+    p Prompts::GET_PLAYER_COORDINATE % length
     ship_choice = gets.chomp
     valid_choice = @player.valid_choice?(ship_choice)
     until valid_choice
@@ -50,18 +55,5 @@ class Game
 
     puts 'Success!'
     valid_choice
-  end
-
-  def render_player_shot_board
-    p "==========="
-    p ". 1 2 3 4" 
-    p "A          "
-    p "B          "
-    p "C          "
-    p "D          "
-    puts " "
-    
-    p "==========="
-    nil
   end
 end

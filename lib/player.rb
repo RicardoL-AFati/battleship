@@ -21,8 +21,13 @@ class Player
     valid_coordinates
   end
 
+  def place_ship(coordinates)
+    @board.create_ship(coordinates)
+  end
+
   def get_final_coordinates_if_valid(choice_list)
     on_board = valid_against_board?(choice_list)
+    return false if not on_board
     doesnt_overlap = valid_against_previous_placement?(choice_list)
     final = on_board && doesnt_overlap ? choice_list : false
   end
