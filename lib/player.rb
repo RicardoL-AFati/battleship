@@ -10,9 +10,10 @@ class Player
     @shot_history = []
   end
 
-  def validate_choice(choice)
+
+  def valid_choice?(choice, second_choice = nil)
     choice_list = choice.split(" ")
-    return false if choice_list > 3
+    return false if choice_list.length > 3
 
     valid_coordinates = get_final_coordinates_if_valid(choice_list)
 
@@ -22,7 +23,7 @@ class Player
 
   def get_final_coordinates_if_valid(choice_list)
     on_board = valid_against_board?(choice_list)
-    doesnt_overlap = valid_against_previous_placement?(choice)
+    doesnt_overlap = valid_against_previous_placement?(choice_list)
     final = on_board && doesnt_overlap ? choice_list : false
   end
 
@@ -37,7 +38,7 @@ class Player
 
   def valid_against_previous_placement?(choice_list)
     valid = true
-    choice_list.each do |valid, coord|
+    choice_list.each do |coord|
       valid = coord_on_board_is_empty?(coord)
       return false if not valid
     end
@@ -48,7 +49,7 @@ class Player
     is_valid = true
     letter, number = coord.split("")
     valid_letter = LETTERS.include?(letter)
-    valid_number = number <= 4
+    valid_number = number.to_i <= 4
 
     unless valid_letter && valid_number
       is_valid = false
