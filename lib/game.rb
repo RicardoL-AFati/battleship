@@ -46,6 +46,7 @@ class Game
     puts "Make your shot by entering a single coordinate:"
     valid_shot = get_player_shot
     place_player_shot(valid_shot)
+    # render new board
     # check for game win
   end
 
@@ -69,10 +70,10 @@ class Game
     coordinate = @watson.board.board_info[letter][number - 1]
     boat_hit = coordinate == "\u{26F5}"
     if boat_hit
-      update_board(letter, number, boat_hit)
-      update_ships(letter, number, shot)
+      update_board(letter, number, boat_hit, :watson)
+      update_ships(shot)
     else
-      update_board(letter, number, boat_hit)
+      update_board(letter, number, boat_hit, :watson)
     end
     give_feedback(boat_hit)
   end
@@ -85,11 +86,15 @@ class Game
     end
   end
 
-  def update_board(letter, number, boat_hit)
-    @watson.board.board_info[letter][number - 1 ] = boat_hit ? "H" : "M"
+  def update_board(letter, number, boat_hit, owners_board)
+    if owners_board == :watson
+      @watson.board.board_info[letter][number - 1 ] = boat_hit ? "H" : "M"
+    else
+      @player.board.board_info[letter][number - 1 ] = boat_hit ? "H" : "M"
+    end
   end
 
-  def update_ships(letter, number, shot)
+  def update_ships(shot)
     shot = shot.upcase
     @watson.ships.each do |ship|
       ship[shot.to_sym] = true if ship.keys.include?(shot.to_sym)
