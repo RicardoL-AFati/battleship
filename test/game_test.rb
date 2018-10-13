@@ -127,6 +127,7 @@ class GameTest < Minitest::Test
   end
 
   def test_play_calls_other_methods
+    skip
     mocked_place_all_ships = MiniTest::Mock.new
     mocked_player_shot_sequence = MiniTest::Mock.new
     mocked_computer_shot_sequence = MiniTest::Mock.new
@@ -346,5 +347,20 @@ class GameTest < Minitest::Test
     @game.watson.ships[0][:A1] = true
     
     assert @game.all_ships_sunk?(@game.watson)
+  end
+
+  def test_computer_sequence_runs_other_methods
+    skip
+    # integration test
+  end
+
+  def test_it_finds_valid_shot_positions
+    @game.watson.shot_history << "A2"
+
+    result = @game.find_valid_shot_positions
+
+    expected = ["A1", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "D1", "D2", "D3", "D4"]
+
+    assert_equal expected, result
   end
 end
