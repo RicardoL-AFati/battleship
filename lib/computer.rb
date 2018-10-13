@@ -1,7 +1,7 @@
 class Computer
   LETTERS = ["A","B","C","D"]
   DIRECTIONS = [:H, :V]
-  attr_reader :board, :ships
+  attr_reader :board, :ships, :shot_history
   def initialize(board)
     @board = board
     @shot_history = []

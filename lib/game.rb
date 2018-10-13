@@ -52,14 +52,19 @@ class Game
     puts "Make your shot by entering a single coordinate:"
     valid_shot = get_player_shot
     place_player_shot(valid_shot)
-    # render_new_board(self)
+    render_new_board(self)
+    # require player input of [ENTER]
     all_ships_sunk?(@watson)
   end
-
+  
   def computer_shot_sequence
-
+    find_valid_shot_positions
+    # pick a single position
+    # make the shot and update shot history
+    # Prompt
+    all_ships_sunk?(@player)
   end
-
+  
   def get_player_shot
     shot = gets.chomp
     valid = @player.coord_inside_board?(shot)
@@ -143,6 +148,15 @@ class Game
     
     print "#{Prompts::TOP}#{new_board}#{Prompts::BOTTOM}"
     new_board
+  end
+
+  def find_valid_shot_positions
+    @player.board.board_info.reduce([]) do |valid, (row,spots)|
+      spots.each_with_index do |spot, index|
+        valid << "#{row}#{index + 1}" if not @watson.shot_history.include?("#{row}#{index + 1}")
+      end
+      valid
+    end
   end
 
   def all_ships_sunk?(owner)

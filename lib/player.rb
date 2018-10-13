@@ -3,7 +3,7 @@ require './lib/prompts'
 class Player
   LETTERS = ["A", "B", "C", "D"]
 
-  attr_reader :board
+  attr_reader :board, :shot_history
 
   def initialize(board)
     @board = board
