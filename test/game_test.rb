@@ -320,4 +320,21 @@ class GameTest < Minitest::Test
     @game.update_ships("A2", @game.watson)
     assert @game.watson.ships[0][:A2]
   end
+
+  def test_it_renders_new_updated_board
+    @game.board.board_info[:B][2] = "M"
+
+    new_board, stdout, stderr = OStreamCatcher.catch do
+      @game.render_new_board(@game)
+    end
+
+    expected = "#{Prompts::TOP}#{new_board}#{Prompts::BOTTOM}"
+
+    result, stdout, stderr = OStreamCatcher.catch do
+      @game.render_new_board(@game)
+    end
+
+    assert_equal expected, stdout
+
+  end
 end
