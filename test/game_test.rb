@@ -240,4 +240,67 @@ class GameTest < Minitest::Test
     assert_equal "Shot has been made...\n", stdout
   end
 
+  # Test place_player_shot calls correct methods on hit or miss
+  def test_it_calls_other_methods_when_placing_player_shot_hit
+    @game.watson.board.board_info[:A][1] = "\u{26F5}"
+
+    mocked_update_board = MiniTest::Mock.new
+    mocked_update_ships = MiniTest::Mock.new
+    mocked_give_feedback = MiniTest::Mock.new
+
+    mocked_update_board.expect(:call, nil,[:A, 2, true, :watson])
+    mocked_update_ships.expect(:call, nil,["A2"])
+    mocked_give_feedback.expect(:call, nil,[true])
+    @game.stub :update_board, mocked_update_board do
+      @game.stub :update_ships, mocked_update_ships do
+        @game.stub :give_feedback, mocked_give_feedback do
+          @game.place_player_shot('A2')
+        end
+      end
+    end
+
+    mocked_update_board.verify
+    mocked_update_ships.verify
+    mocked_give_feedback.verify
+  end
+
+  def test_it_calls_other_methods_when_placing_player_shot_miss
+    @game.watson.board.board_info[:A][1] = " "
+
+    mocked_update_board = MiniTest::Mock.new
+    mocked_give_feedback = MiniTest::Mock.new
+
+    mocked_update_board.expect(:call, nil,[:A, 2, false, :watson])
+    mocked_give_feedback.expect(:call, nil,[false])
+    @game.stub :update_board, mocked_update_board do
+      @game.stub :give_feedback, mocked_give_feedback do
+        @game.place_player_shot('A2')
+      end
+    end
+
+    mocked_update_board.verify
+    mocked_give_feedback.verify
+  end
+
+  def test_it_gives_feedback_if_shot_was_a_hit
+    result, stdout, stderr = OStreamCatcher.catch do
+      @game.give_feedback(true)
+    end
+    assert_equal "#{Prompts::BOAT_HIT}\n", stdout
+  end
+  
+  def test_it_gives_feedback_if_shot_was_a_miss
+    result, stdout, stderr = OStreamCatcher.catch do
+      @game.give_feedback(false)
+    end
+    assert_equal "#{Prompts::BOAT_MISS}\n", stdout
+  end
+  
+  def test_it_updates_shot_board
+    
+  end
+
+  def test_it_updates_players_board
+    skip
+  end
 end
