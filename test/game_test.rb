@@ -335,6 +335,16 @@ class GameTest < Minitest::Test
     end
 
     assert_equal expected, stdout
+  end
 
+  def test_it_checks_for_all_ships_sunk
+    @game.watson.ships << {A1: false, A2: true}
+    @game.watson.ships << {B1: true, C1: true, D1: true}
+
+    refute @game.all_ships_sunk?(@game.watson)
+    
+    @game.watson.ships[0][:A1] = true
+    
+    assert @game.all_ships_sunk?(@game.watson)
   end
 end
