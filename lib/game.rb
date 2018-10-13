@@ -6,11 +6,11 @@ require './lib/board'
 require 'pry'
 
 class Game
-  attr_reader :player, :watson
+  attr_reader :player, :watson, :board
   def initialize
    @player = Player.new(Board.new)
    @watson = Computer.new(Board.new)
-   @shot_board = Board.new
+   @board = Board.new
   end
 
   def show_start_prompt
@@ -46,8 +46,12 @@ class Game
     puts "Make your shot by entering a single coordinate:"
     valid_shot = get_player_shot
     place_player_shot(valid_shot)
-    # render new board
+    render_new_board
     # check for game win
+  end
+
+  def computer_shot_sequence
+
   end
 
   def get_player_shot
@@ -97,10 +101,6 @@ class Game
     end
   end
 
-  def computer_shot_sequence
-
-  end
-
   def place_all_ships
     @watson.place_ships
     ship_1 = get_player_ship_coordinates('two')
@@ -122,5 +122,19 @@ class Game
 
     puts 'That ship has been placed!'
     valid_choice
+  end
+
+  def render_new_board(owner)
+    new_board = owner.board.board_info.reduce("") do |board_string, (row_name, columns)|
+      printable_row = columns.reduce("") do |row_string, spot|
+        row_string += "#{spot} "
+        row_string 
+      end
+      board_string += "#{row_name.to_s} #{printable_row} \n"
+      board_string
+    end
+    
+    print "#{Prompts::TOP}#{new_board}#{Prompts::BOTTOM}"
+    new_board
   end
 end
