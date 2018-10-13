@@ -65,7 +65,7 @@ class ComputerTest < Minitest::Test
       C: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
       D: ["\u{26F5}","\u{26F5}","\u{26F5}","\u{26F5}"]
     }
-    
+
     coordinates = @computer.get_coordinates(3)
     assert_equal ["A1", "B1", "C1"], coordinates
   end
@@ -108,5 +108,34 @@ class ComputerTest < Minitest::Test
 
     assert (/[AB]/) =~ letter
     assert (/[1-4]/) =~ number.to_s
+  end
+
+  def test_it_finds_valid_positions_with_empty_board
+    assert_equal @valid_positions, @computer.find_valid_positions
+  end
+
+  def test_it_finds_valid_positions_with_filled_board
+    @computer.board.board_info = {
+      A: ["\u{26F5}","\u{26F5}","\u{26F5}","\u{26F5}"],
+      B: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
+      C: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
+      D: [" ","\u{26F5}","\u{26F5}","\u{26F5}"]
+    }
+
+    expected = ["B1", "C1", "D1"]
+
+    assert_equal expected, @computer.find_valid_positions
+  end
+
+
+  def test_it_adds_to_ships
+    ship_1_coordinates = ["A1", "A2"]
+    ship_2_coordinates = ["B1", "B2", "B3"]
+
+    @computer.add_to_ships(ship_1_coordinates, ship_2_coordinates)
+
+    assert_equal 2, @computer.ships.length
+    assert_equal 2, @computer.ships[0].length
+    assert_equal 3, @computer.ships[1].length
   end
 end

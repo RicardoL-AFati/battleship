@@ -1,10 +1,11 @@
 class Computer
   LETTERS = ["A","B","C","D"]
   DIRECTIONS = [:H, :V]
-  attr_reader :board
+  attr_reader :board, :ships
   def initialize(board)
     @board = board
     @shot_history = []
+    @ships = []
     assign_board_owner
   end
 
@@ -15,6 +16,7 @@ class Computer
   def place_ships
     ship_1_coordinates = get_coordinates(2)
     ship_2_coordinates = get_coordinates(3)
+    add_to_ships(ship_1_coordinates, ship_2_coordinates)
     @board.create_ship(ship_1_coordinates)
     @board.create_ship(ship_2_coordinates)
   end
@@ -62,13 +64,23 @@ class Computer
     end
     coordinates
   end
-  
+
   def find_valid_positions
     @board.board_info.reduce([]) do |valid, (row,spots)|
       spots.each_with_index do |spot, index|
         valid << "#{row}#{index + 1}" if spot == " "
       end
       valid
+    end
+  end
+
+  def add_to_ships(*ships_coordinates)
+    ships_coordinates.each do |ship_coordinates|
+      ship = ship_coordinates.reduce({}) do |ship, coordinate|
+        ship[coordinate] = false
+        ship
+      end
+      @ships << ship
     end
   end
 end

@@ -8,6 +8,7 @@ class Player
   def initialize(board)
     @board = board
     @shot_history = []
+    @ships = []
   end
 
 
