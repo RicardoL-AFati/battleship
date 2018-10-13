@@ -248,8 +248,8 @@ class GameTest < Minitest::Test
     mocked_update_ships = MiniTest::Mock.new
     mocked_give_feedback = MiniTest::Mock.new
 
-    mocked_update_board.expect(:call, nil,[:A, 2, true, :watson])
-    mocked_update_ships.expect(:call, nil,["A2"])
+    mocked_update_board.expect(:call, nil,[:A, 2, true, @game.watson])
+    mocked_update_ships.expect(:call, nil,["A2", @game.watson])
     mocked_give_feedback.expect(:call, nil,[true])
     @game.stub :update_board, mocked_update_board do
       @game.stub :update_ships, mocked_update_ships do
@@ -270,7 +270,7 @@ class GameTest < Minitest::Test
     mocked_update_board = MiniTest::Mock.new
     mocked_give_feedback = MiniTest::Mock.new
 
-    mocked_update_board.expect(:call, nil,[:A, 2, false, :watson])
+    mocked_update_board.expect(:call, nil,[:A, 2, false, @game.watson])
     mocked_give_feedback.expect(:call, nil,[false])
     @game.stub :update_board, mocked_update_board do
       @game.stub :give_feedback, mocked_give_feedback do
@@ -296,11 +296,24 @@ class GameTest < Minitest::Test
     assert_equal "#{Prompts::BOAT_MISS}\n", stdout
   end
   
-  def test_it_updates_shot_board
-    
+  def test_it_updates_watsons_board_with_a_miss
+    assert_equal " ", @game.watson.board.board_info[:A][1]
+
+    @game.update_board(:A, 2, false, @game.watson)
+
+    assert_equal "M", @game.watson.board.board_info[:A][1]
   end
 
-  def test_it_updates_players_board
+  def test_it_updates_watsons_board_with_a_miss
+    assert_equal " ", @game.watson.board.board_info[:A][1]
+
+    @game.update_board(:A, 2, true, @game.watson)
+
+    assert_equal "H", @game.watson.board.board_info[:A][1]
+  end
+
+  def test_it_updates_ships_board
+    # @game.update_ships
     skip
   end
 end
