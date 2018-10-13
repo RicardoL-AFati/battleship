@@ -312,8 +312,12 @@ class GameTest < Minitest::Test
     assert_equal "H", @game.watson.board.board_info[:A][1]
   end
 
-  def test_it_updates_ships_board
-    # @game.update_ships
-    skip
+  def test_it_updates_ships
+    @game.watson.ships << {A1: false, A2: false}
+    @game.watson.ships << {B1: false, C1: false, D1: false}
+
+    refute @game.watson.ships[0][:A2]
+    @game.update_ships("A2", @game.watson)
+    assert @game.watson.ships[0][:A2]
   end
 end
