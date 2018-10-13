@@ -43,26 +43,23 @@ class Game
   end
 
   def player_shot_sequence
-    # Show make_shot prompt
     puts "Make your shot by entering a single coordinate:"
-    # get user input
     valid_shot = get_player_shot
     place_player_shot(valid_shot)
     # check for game win
   end
 
   def get_player_shot
-    player_shot = gets.chomp
-    # validate shot
-    valid_shot = validate_shot?(player_shot)
-    until valid_shot
-      p "Incorrect, remember to place your shot on the grid of A-D and 1-4."
-      player_shot = gets.chomp
-      valid_shot = valid_shot?(player_shot)
+    shot = gets.chomp
+    valid = @player.coord_inside_board?(shot)
+    until valid
+      puts "Incorrect, remember to place your shot on the grid of A-D and 1-4."
+      shot = gets.chomp
+      valid = @player.coord_inside_board?(shot)
     end
 
-    puts 'Success!'
-    valid_shot
+    puts 'Shot has been made...'
+    shot
   end
 
   def place_player_shot(shot)
@@ -77,7 +74,15 @@ class Game
     else
       update_board(letter, number, boat_hit)
     end
+    give_feedback(boat_hit)
+  end
 
+  def give_feedback(boat_hit)
+    if boat_hit
+      puts Prompts::BOAT_HIT
+    else
+      puts Prompts::BOAT_MISS
+    end
   end
 
   def update_board(letter, number, boat_hit)
@@ -92,7 +97,7 @@ class Game
   end
 
   def computer_shot_sequence
-    
+
   end
 
   def place_all_ships
@@ -109,12 +114,12 @@ class Game
     ship_choice = gets.chomp
     valid_choice = @player.valid_choice?(ship_choice)
     until valid_choice
-      p "Incorrect, remember to place your ship on the grid of A-D and 1-4 and dont overlap ships."
+      puts "Incorrect, remember to place your ship on the grid of A-D and 1-4 and dont overlap ships."
       ship_choice = gets.chomp
       valid_choice= @player.valid_choice?(ship_choice)
     end
 
-    puts 'Success!'
+    puts 'That ship has been placed!'
     valid_choice
   end
 end

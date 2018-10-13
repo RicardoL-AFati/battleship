@@ -147,6 +147,64 @@ class GameTest < Minitest::Test
     mocked_computer_shot_sequence.verify
   end
 
+  def test_it_gets_player_two_length_ship_coordinates_with_valid_coordinates
+    io = StringIO.new
+    io.puts "A1 A2"
+    io.rewind
+    $stdin = io
+
+    result, stdout, stderr = OStreamCatcher.catch do
+      @game.get_player_ship_coordinates('two')
+    end
+
+    $stind = STDIN
+
+    assert_equal result, ["A1", "A2"]
+    assert_equal stdout, "\"Enter the squares for a two-unit ship\"\nThat ship has been placed!\n"
+  end
+
+  def test_it_gets_player_two_length_ship_coordinates_with_invalid_coordinates
+    skip
+    io = StringIO.new
+    io.puts "A1 A5"
+    io.rewind
+    $stdin = io
+    binding.pry
+    result, stdout, stderr = OStreamCatcher.catch do
+      @game.get_player_ship_coordinates('two')
+    end
+
+    $stind = STDIN
+    assert_equal stdout,
+    "\"Incorrect, remember to place your ship on the grid of A-D and 1-4 and dont overlap ships.\"\nThat ship has been placed!\n"
+  end
+
+  def test_it_gets_player_three_length_ship_coordinates_with_valid_coordinates
+    io = StringIO.new
+    io.puts "A1 A2 A3"
+    io.rewind
+    $stdin = io
+
+    result, stdout, stderr = OStreamCatcher.catch do
+      @game.get_player_ship_coordinates('three')
+    end
+
+    $stind = STDIN
+
+    assert_equal result, ["A1", "A2", "A3"]
+    assert_equal stdout, "\"Enter the squares for a three-unit ship\"\nThat ship has been placed!\n"
+  end
+
+  def test_it_shows_empty_board_once_ships_are_placed
+    skip
+    result, stdout, stderr = OStreamCatcher.catch do
+      @game.place_all_ships
+    end
+
+    assert_equal "#{Prompts::TOP}#{Prompts::EMPTY_BOARD}#{Prompts::BOTTOM}",
+    stdout
+  end
+
   def test_it_shows_instructions
     result, stdout, stderr = OStreamCatcher.catch do
       @game.show_instructions
