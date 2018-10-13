@@ -41,7 +41,7 @@ class GameTest < Minitest::Test
       @game.run
     end
 
-    $stdin = STDIN  
+    $stdin = STDIN
 
     @mocked_method.verify
   end
@@ -57,7 +57,7 @@ class GameTest < Minitest::Test
       @game.run
     end
 
-    $stdin = STDIN  
+    $stdin = STDIN
 
     @mocked_method.verify
   end
@@ -73,7 +73,7 @@ class GameTest < Minitest::Test
       @game.run
     end
 
-    $stdin = STDIN  
+    $stdin = STDIN
 
     @mocked_method.verify
   end
@@ -89,7 +89,7 @@ class GameTest < Minitest::Test
       @game.run
     end
 
-    $stdin = STDIN  
+    $stdin = STDIN
 
     @mocked_method.verify
   end
@@ -105,7 +105,7 @@ class GameTest < Minitest::Test
       @game.run
     end
 
-    $stdin = STDIN  
+    $stdin = STDIN
 
     @mocked_method.verify
   end
@@ -121,37 +121,31 @@ class GameTest < Minitest::Test
       @game.run
     end
 
-    $stdin = STDIN  
+    $stdin = STDIN
 
     @mocked_method.verify
   end
 
-  # def test_play_calls_other_methods
-  #   mocked_place_all_ships = MiniTest::Mock.new
-  #   mocked_player_shot_sequence = MiniTest::Mock.new
-  #   mocked_computer_shot_sequence = MiniTest::Mock.new
+  def test_play_calls_other_methods
+    mocked_place_all_ships = MiniTest::Mock.new
+    mocked_player_shot_sequence = MiniTest::Mock.new
+    mocked_computer_shot_sequence = MiniTest::Mock.new
 
-  #   mocked_place_all_ships.expect :call, nil
-  #   @game.stub :place_all_ships, mocked_place_all_ships do
-  #     @game.play
-  #   end
+    mocked_place_all_ships.expect :call, nil
+    mocked_player_shot_sequence.expect :call, nil
+    mocked_computer_shot_sequence.expect :call, nil
+    @game.stub :place_all_ships, mocked_place_all_ships do
+      @game.stub :player_shot_sequence, mocked_player_shot_sequence do
+        @game.stub :computer_shot_sequence, mocked_computer_shot_sequence do
+          @game.play
+        end
+      end
+    end
 
-  #   mocked_place_all_ships.verify
-
-  #   mocked_player_shot_sequence.expect :call, nil
-  #   @game.stub :player_shot_sequence, mocked_player_shot_sequence do
-  #     @game.play
-  #   end
-
-  #   mocked_player_shot_sequence.verify
-    
-  #   mocked_computer_shot_sequence.expect :call, nil
-  #   @game.stub :computer_shot_sequence, mocked_computer_shot_sequence do
-  #     @game.play
-  #   end
-    
-  #   mocked_computer_shot_sequence.verify
-  # end
+    mocked_place_all_ships.verify
+    mocked_player_shot_sequence.verify
+    mocked_computer_shot_sequence.verify
+  end
 
   def test_it_shows_instructions
     result, stdout, stderr = OStreamCatcher.catch do
@@ -159,7 +153,7 @@ class GameTest < Minitest::Test
     end
     assert_equal stdout, "#{Prompts::INSTRUCTIONS}\n"
   end
-  
+
   def test_it_quits
     result, stdout, stderr = OStreamCatcher.catch do
       @game.quit
@@ -170,6 +164,22 @@ class GameTest < Minitest::Test
   def test_it_shows_prompts
     expected = "#{Prompts::WELCOME}\n#{Prompts::START}> "
     assert_equal expected, @game.show_start_prompt
+  end
+
+  def test_it_gets_valid_player_shot
+    io = StringIO.new
+    io.puts "A1"
+    io.rewind
+    $stdin = io
+
+    result, stdout, stderr = OStreamCatcher.catch do
+      @game.get_player_shot
+    end
+
+    $stdin = STDIN
+
+    assert_equal "A1", result
+    assert_equal "Shot has been made...\n", stdout
   end
 
 end
