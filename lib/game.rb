@@ -51,17 +51,19 @@ class Game
   def player_shot_sequence
     puts "Make your shot by entering a single coordinate:"
     valid_shot = get_player_shot
-    place_player_shot(valid_shot)
+    place_shot(valid_shot, @watson)
+    # record in shot history
     render_new_board(self)
     # require player input of [ENTER]
     all_ships_sunk?(@watson)
   end
   
   def computer_shot_sequence
-    find_valid_shot_positions
-    # pick a single position
-    # make the shot and update shot history
-    # Prompt
+    valid_shots = find_valid_shot_positions
+    shot = valid_shots.shuffle[0]
+    place_shot(shot, @player)
+    # record in shot history
+    render_new_board(@player)
     all_ships_sunk?(@player)
   end
   
@@ -78,27 +80,26 @@ class Game
     shot
   end
 
-  def place_player_shot(shot)
+  def place_shot(shot, opponent)
     letter, number = shot.split('')
     letter = letter.upcase.to_sym
     number = number.to_i
-    coordinate = @watson.board.board_info[letter][number - 1]
+    coordinate = opponent.board.board_info[letter][number - 1]
     boat_hit = coordinate == "\u{26F5}"
     if boat_hit
-      update_board(letter, number, boat_hit, @watson)
-      update_ships(shot, @watson)
+      update_board(letter, number, boat_hit, opponent)
+      update_ships(shot, opponent)
     else
-      update_board(letter, number, boat_hit, @watson)
+      update_board(letter, number, boat_hit, opponent)
     end
-    # record in shot history
-    give_feedback(boat_hit)
+    give_feedback(boat_hit, shot)
   end
 
-  def give_feedback(boat_hit)
+  def give_feedback(boat_hit, shot)
     if boat_hit
-      puts Prompts::BOAT_HIT
+      puts Prompts::BOAT_HIT % shot
     else
-      puts Prompts::BOAT_MISS
+      puts Prompts::BOAT_MISS % shot
     end
   end
 

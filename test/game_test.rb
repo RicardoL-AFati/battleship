@@ -251,11 +251,11 @@ class GameTest < Minitest::Test
 
     mocked_update_board.expect(:call, nil,[:A, 2, true, @game.watson])
     mocked_update_ships.expect(:call, nil,["A2", @game.watson])
-    mocked_give_feedback.expect(:call, nil,[true])
+    mocked_give_feedback.expect(:call, nil,[true, "A2"])
     @game.stub :update_board, mocked_update_board do
       @game.stub :update_ships, mocked_update_ships do
         @game.stub :give_feedback, mocked_give_feedback do
-          @game.place_player_shot('A2')
+          @game.place_shot('A2', @game.watson)
         end
       end
     end
@@ -272,10 +272,10 @@ class GameTest < Minitest::Test
     mocked_give_feedback = MiniTest::Mock.new
 
     mocked_update_board.expect(:call, nil,[:A, 2, false, @game.watson])
-    mocked_give_feedback.expect(:call, nil,[false])
+    mocked_give_feedback.expect(:call, nil,[false, "A2"])
     @game.stub :update_board, mocked_update_board do
       @game.stub :give_feedback, mocked_give_feedback do
-        @game.place_player_shot('A2')
+        @game.place_shot('A2', @game.watson)
       end
     end
 
@@ -285,16 +285,16 @@ class GameTest < Minitest::Test
 
   def test_it_gives_feedback_if_shot_was_a_hit
     result, stdout, stderr = OStreamCatcher.catch do
-      @game.give_feedback(true)
+      @game.give_feedback(true, "B4")
     end
-    assert_equal "#{Prompts::BOAT_HIT}\n", stdout
+    assert_equal "#{Prompts::BOAT_HIT % "B4"}\n", stdout
   end
   
   def test_it_gives_feedback_if_shot_was_a_miss
     result, stdout, stderr = OStreamCatcher.catch do
-      @game.give_feedback(false)
+      @game.give_feedback(false, "B4")
     end
-    assert_equal "#{Prompts::BOAT_MISS}\n", stdout
+    assert_equal "#{Prompts::BOAT_MISS % "B4"}\n", stdout
   end
   
   def test_it_updates_watsons_board_with_a_miss
