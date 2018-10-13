@@ -65,7 +65,7 @@ class ComputerTest < Minitest::Test
       C: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
       D: ["\u{26F5}","\u{26F5}","\u{26F5}","\u{26F5}"]
     }
-    
+
     coordinates = @computer.get_coordinates(3)
     assert_equal ["A1", "B1", "C1"], coordinates
   end
@@ -108,5 +108,13 @@ class ComputerTest < Minitest::Test
 
     assert (/[AB]/) =~ letter
     assert (/[1-4]/) =~ number.to_s
+  end
+
+  def test_it_finds_valid_positions_with_empty_board
+    assert_equal @valid_positions, @computer.find_valid_positions
+  end
+
+  def test_it_finds_valid_positions_with_filled_board
+    skip
   end
 end
