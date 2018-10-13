@@ -2,9 +2,11 @@ class Computer
   LETTERS = ["A","B","C","D"]
   DIRECTIONS = [:H, :V]
   attr_reader :board
+  attr_accessor :ships
   def initialize(board)
     @board = board
     @shot_history = []
+    @ships = []
     assign_board_owner
   end
 
