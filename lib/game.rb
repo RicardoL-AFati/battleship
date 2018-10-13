@@ -30,7 +30,7 @@ class Game
 
   def play
     place_all_ships
-    player_shot_sequence
+    player_shot_sequence # refactor for until game_won 
     computer_shot_sequence
   end
 
@@ -46,8 +46,8 @@ class Game
     puts "Make your shot by entering a single coordinate:"
     valid_shot = get_player_shot
     place_player_shot(valid_shot)
-    render_new_board
-    # check for game win
+    # render_new_board(self)
+    all_ships_sunk?(@watson)
   end
 
   def computer_shot_sequence
@@ -79,6 +79,7 @@ class Game
     else
       update_board(letter, number, boat_hit, @watson)
     end
+    # record in shot history
     give_feedback(boat_hit)
   end
 
@@ -136,5 +137,12 @@ class Game
     
     print "#{Prompts::TOP}#{new_board}#{Prompts::BOTTOM}"
     new_board
+  end
+
+  def all_ships_sunk?(owner)
+    owner.ships.reduce(true) do |game_over, ship|
+      game_over = false if ship.values.include?(false)
+      game_over
+    end
   end
 end
