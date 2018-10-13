@@ -30,9 +30,16 @@ class Game
 
   def play
     place_all_ships
-    player_shot_sequence # refactor for until game_won 
-    computer_shot_sequence
+    player_won, computer_won = false, false
+    until player_won || computer_won
+      player_won = player_shot_sequence 
+      computer_won = computer_shot_sequence
+    end
+
+    print_game_result_screen(player_won, computer_won)
   end
+
+
 
   def show_instructions
     puts Prompts::INSTRUCTIONS
