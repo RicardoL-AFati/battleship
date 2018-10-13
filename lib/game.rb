@@ -35,11 +35,10 @@ class Game
       player_won = player_shot_sequence 
       computer_won = computer_shot_sequence
     end
+    winner = player_won ? @player : @watson
 
-    print_game_result_screen(player_won, computer_won)
+    print_game_result_screen(winner)
   end
-
-
 
   def show_instructions
     puts Prompts::INSTRUCTIONS
@@ -151,5 +150,9 @@ class Game
       game_over = false if ship.values.include?(false)
       game_over
     end
+  end
+
+  def print_game_result_screen
+    
   end
 end
