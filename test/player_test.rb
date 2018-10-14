@@ -42,9 +42,17 @@ class PlayerTest < Minitest::Test
   end
   
   def test_it_can_place_a_ship
+    skip
     @player.place_ship(['A1', 'B1'])
-    require 'pry'; binding.pry
     #integration test
+  end
+
+  def test_it_adds_to_ships
+    ship_1_coordinates = ["A1", "A2"]
+
+    @player.add_to_ships(ship_1_coordinates)
+    assert_equal 1, @player.ships.length
+    assert_equal 2, @player.ships[0].length
   end
 
 end
