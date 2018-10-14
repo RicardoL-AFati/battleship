@@ -35,7 +35,7 @@ module Prompts
   BOTTOM = "===========\n"
   EMPTY_BOARD = "A          \nB          \nC          \nD          \n"
   BOAT_HIT = "Boat Hit on %s! \u{1F4A5}\u{1F4A5}\u{1F4A5}"
-  BOAT_MISS = "Boat Miss on %s! \u{1F4A6}\u{1F 4A6}\u{1F4A6}"
+  BOAT_MISS = "Boat Miss on %s! \u{1F4A6}\u{1F4A6}\u{1F4A6}"
   def self.print_empty_board
     print TOP
     print EMPTY_BOARD
