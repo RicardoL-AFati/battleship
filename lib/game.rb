@@ -32,7 +32,9 @@ class Game
     place_all_ships
     player_won, computer_won = false, false
     until player_won || computer_won
+      print Prompts::PLAYER_TURN
       player_won = player_shot_sequence 
+      print Prompts::COMPUTER_TURN
       computer_won = computer_shot_sequence
     end
     
@@ -108,7 +110,6 @@ class Game
   def update_ships(shot, owner)
     shot = shot.upcase
     owner.ships.each do |ship|
-      require 'pry'; binding.pry
       ship[shot.to_sym] = true if ship.keys.include?(shot.to_sym)
     end
   end
@@ -145,8 +146,8 @@ class Game
       board_string += "#{row_name.to_s} #{printable_row} \n"
       board_string
     end
-    
-    print "#{Prompts::TOP}#{new_board}#{Prompts::BOTTOM}"
+    title = owner == @player ? Prompts::PLAYER_BOARD : Prompts::PLAYER_SHOTS
+    print "#{title}#{Prompts::TOP}#{new_board}#{Prompts::BOTTOM}"
     new_board
   end
 
