@@ -77,7 +77,7 @@ class Computer
   def add_to_ships(*ships_coordinates)
     ships_coordinates.each do |ship_coordinates|
       ship = ship_coordinates.reduce({}) do |ship, coordinate|
-        ship[coordinate] = false
+        ship[coordinate.to_sym] = false
         ship
       end
       @ships << ship
