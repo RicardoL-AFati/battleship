@@ -31,11 +31,16 @@ module Prompts
 
   INVALID_CHOICE = "Enter one of the letters in () or the entire word - no spaces"
   GET_PLAYER_COORDINATE = "Enter the squares for a %s-unit ship"
-  TOP = "===========\n. 1 2 3 4\n"
-  BOTTOM = "===========\n"
+  PLAYER_SHOTS = "============\nPLAYER SHOTS\n"
+  PLAYER_BOARD = "============\nPLAYER BOARD\n"
+  TOP = "============\n. 1 2 3 4\n"
+  BOTTOM = "============\n"
   EMPTY_BOARD = "A          \nB          \nC          \nD          \n"
-  BOAT_HIT = "Boat Hit! \u{1F4A5}\u{1F4A5}\u{1F4A5}"
-  BOAT_MISS = "Boat Miss! \u{1F4A6}\u{1F4A6}\u{1F4A6}"
+  BOAT_HIT = "Boat Hit on %s! \u{1F4A5}\u{1F4A5}\u{1F4A5}"
+  BOAT_MISS = "Boat Miss on %s! \u{1F4A6}\u{1F4A6}\u{1F4A6}"
+  PLAYER_TURN = "~~~~~~~~~~~~~~~~~~~\n  PLAYERS TURN   \n~~~~~~~~~~~~~~~~~~~\n"
+  COMPUTER_TURN = "~~~~~~~~~~~~~~~~~~~\n  COMPUTERS TURN   \n~~~~~~~~~~~~~~~~~~~\n"
+
   def self.print_empty_board
     print TOP
     print EMPTY_BOARD

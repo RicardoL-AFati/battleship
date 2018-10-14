@@ -3,7 +3,7 @@ require './lib/prompts'
 class Player
   LETTERS = ["A", "B", "C", "D"]
 
-  attr_reader :board
+  attr_reader :board, :shot_history, :ships
 
   def initialize(board)
     @board = board
@@ -24,6 +24,7 @@ class Player
 
   def place_ship(coordinates)
     @board.create_ship(coordinates)
+    add_to_ships(coordinates)
   end
 
   def get_final_coordinates_if_valid(choice_list)
@@ -68,5 +69,15 @@ class Player
     letter = letter.upcase.to_sym
     number = number.to_i
     valid = @board.board_info[letter][number - 1] == " "
+  end
+
+  def add_to_ships(*ships_coordinates)
+    ships_coordinates.each do |ship_coordinates|
+      ship = ship_coordinates.reduce({}) do |ship, coordinate|
+        ship[coordinate.to_sym] = false
+        ship
+      end
+      @ships << ship
+    end
   end
 end
