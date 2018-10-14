@@ -92,20 +92,20 @@ class Game
     coordinate = opponent.board.board_info[letter][number - 1]
     boat_hit = coordinate == "\u{26F5}"
 
-    sunk_boat = boat_hit ? update_ships(shot, opponent) : false
+    sunk_boat_length = boat_hit ? update_ships(shot, opponent) : nil
 
     update_board(letter, number, boat_hit, self) if opponent == @watson
     update_board(letter, number, boat_hit, opponent)
-    give_feedback(boat_hit, shot, sunk_boat)
+    give_feedback(boat_hit, shot, sunk_boat_length)
   end
 
-  def give_feedback(boat_hit, shot, sunk_boat)
+  def give_feedback(boat_hit, shot, sunk_boat_length)
     if boat_hit
       puts Prompts::BOAT_HIT % shot
     else
       puts Prompts::BOAT_MISS % shot
     end
-    puts Prompts::SUNK_BOAT % sunk_boat[length] if sunk_boat
+    puts Prompts::SUNK_BOAT % sunk_boat_length if sunk_boat_length
   end
 
   def update_board(letter, number, boat_hit, owner)
@@ -183,7 +183,7 @@ class Game
       sunk = false if not hit
       sunk
     end
-    
+
     return false if not sunk
     owner.ships[hit_ship_index].length
   end

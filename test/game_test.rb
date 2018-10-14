@@ -273,7 +273,7 @@ class GameTest < Minitest::Test
 
     mocked_update_board.expect(:call, nil,[:A, 2, false, @game])
     mocked_update_board.expect(:call, nil,[:A, 2, false, @game.watson])
-    mocked_give_feedback.expect(:call, nil,[false, "A2", false])
+    mocked_give_feedback.expect(:call, nil,[false, "A2", nil])
     @game.stub :update_board, mocked_update_board do
       @game.stub :give_feedback, mocked_give_feedback do
         @game.place_shot('A2', @game.watson)
@@ -297,6 +297,20 @@ class GameTest < Minitest::Test
       @game.give_feedback(false, "B4", false)
     end
     assert_equal "#{Prompts::BOAT_MISS % "B4"}\n", stdout
+  end
+
+  def test_it_gives_feedback_if_ship_was_sunk_length_three
+    result, stdout, stderr = OStreamCatcher.catch do
+      @game.give_feedback(true, "B4", 3)
+    end
+    assert_equal "#{Prompts::BOAT_HIT % "B4"}\n#{Prompts::SUNK_BOAT % 3}\n", stdout
+  end
+
+  def test_it_gives_feedback_if_ship_was_sunk_length_two
+    result, stdout, stderr = OStreamCatcher.catch do
+      @game.give_feedback(true, "B4", 2)
+    end
+    assert_equal "#{Prompts::BOAT_HIT % "B4"}\n#{Prompts::SUNK_BOAT % 2}\n", stdout
   end
 
   def test_it_updates_watsons_board_with_a_miss
