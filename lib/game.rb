@@ -35,9 +35,10 @@ class Game
       player_won = player_shot_sequence 
       computer_won = computer_shot_sequence
     end
+    
     winner = player_won ? @player : @watson
 
-    print_game_result_screen(winner)
+    print_game_result_screen
   end
 
   def show_instructions
@@ -86,12 +87,9 @@ class Game
     number = number.to_i
     coordinate = opponent.board.board_info[letter][number - 1]
     boat_hit = coordinate == "\u{26F5}"
-    if boat_hit
-      update_board(letter, number, boat_hit, opponent)
-      update_ships(shot, opponent)
-    else
-      update_board(letter, number, boat_hit, opponent)
-    end
+    update_ships(shot, opponent) if boat_hit
+    update_board(letter, number, boat_hit, self) if opponent == @watson
+    update_board(letter, number, boat_hit, opponent)
     give_feedback(boat_hit, shot)
   end
 
@@ -110,6 +108,7 @@ class Game
   def update_ships(shot, owner)
     shot = shot.upcase
     owner.ships.each do |ship|
+      require 'pry'; binding.pry
       ship[shot.to_sym] = true if ship.keys.include?(shot.to_sym)
     end
   end

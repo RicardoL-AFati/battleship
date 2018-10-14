@@ -241,7 +241,6 @@ class GameTest < Minitest::Test
     assert_equal "Shot has been made...\n", stdout
   end
 
-  # Test place_player_shot calls correct methods on hit or miss
   def test_it_calls_other_methods_when_placing_player_shot_hit
     @game.watson.board.board_info[:A][1] = "\u{26F5}"
 
@@ -249,6 +248,7 @@ class GameTest < Minitest::Test
     mocked_update_ships = MiniTest::Mock.new
     mocked_give_feedback = MiniTest::Mock.new
 
+    mocked_update_board.expect(:call, nil,[:A, 2, true, @game])
     mocked_update_board.expect(:call, nil,[:A, 2, true, @game.watson])
     mocked_update_ships.expect(:call, nil,["A2", @game.watson])
     mocked_give_feedback.expect(:call, nil,[true, "A2"])
@@ -261,6 +261,7 @@ class GameTest < Minitest::Test
     end
 
     mocked_update_board.verify
+    mocked_update_board.verify
     mocked_update_ships.verify
     mocked_give_feedback.verify
   end
@@ -271,6 +272,7 @@ class GameTest < Minitest::Test
     mocked_update_board = MiniTest::Mock.new
     mocked_give_feedback = MiniTest::Mock.new
 
+    mocked_update_board.expect(:call, nil,[:A, 2, false, @game])
     mocked_update_board.expect(:call, nil,[:A, 2, false, @game.watson])
     mocked_give_feedback.expect(:call, nil,[false, "A2"])
     @game.stub :update_board, mocked_update_board do
@@ -279,6 +281,7 @@ class GameTest < Minitest::Test
       end
     end
 
+    mocked_update_board.verify
     mocked_update_board.verify
     mocked_give_feedback.verify
   end
@@ -305,12 +308,28 @@ class GameTest < Minitest::Test
     assert_equal "M", @game.watson.board.board_info[:A][1]
   end
 
-  def test_it_updates_watsons_board_with_a_miss
+  def test_it_updates_watsons_board_with_a_hit
     assert_equal " ", @game.watson.board.board_info[:A][1]
 
     @game.update_board(:A, 2, true, @game.watson)
 
     assert_equal "H", @game.watson.board.board_info[:A][1]
+  end
+
+  def test_it_updates_game_board_with_a_miss
+    assert_equal " ", @game.board.board_info[:A][1]
+
+    @game.update_board(:A, 2, false, @game)
+
+    assert_equal "M", @game.board.board_info[:A][1]
+  end
+
+  def test_it_updates_game_board_with_a_hit
+    assert_equal " ", @game.board.board_info[:A][1]
+
+    @game.update_board(:A, 2, true, @game)
+
+    assert_equal "H", @game.board.board_info[:A][1]
   end
 
   def test_it_updates_ships
