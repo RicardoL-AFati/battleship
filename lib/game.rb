@@ -88,20 +88,23 @@ class Game
     letter, number = shot.split('')
     letter = letter.upcase.to_sym
     number = number.to_i
+
     coordinate = opponent.board.board_info[letter][number - 1]
     boat_hit = coordinate == "\u{26F5}"
-    update_ships(shot, opponent) if boat_hit
+    sunk_boat = update_ships(shot, opponent) if boat_hit
+
     update_board(letter, number, boat_hit, self) if opponent == @watson
     update_board(letter, number, boat_hit, opponent)
-    give_feedback(boat_hit, shot)
+    give_feedback(boat_hit, shot, sunk_boat)
   end
 
-  def give_feedback(boat_hit, shot)
+  def give_feedback(boat_hit, shot, sunk_boat)
     if boat_hit
       puts Prompts::BOAT_HIT % shot
     else
       puts Prompts::BOAT_MISS % shot
     end
+    puts Prompts::SUNK_BOAT % sunk_boat[length] if sunk_boat
   end
 
   def update_board(letter, number, boat_hit, owner)
@@ -113,6 +116,7 @@ class Game
     owner.ships.each do |ship|
       ship[shot.to_sym] = true if ship.keys.include?(shot.to_sym)
     end
+    sunk_boat?(shot, owner)
   end
 
   def place_all_ships
@@ -166,6 +170,19 @@ class Game
       game_over = false if ship.values.include?(false)
       game_over
     end
+  end
+
+  def sunk_boat?(shot, owner)
+    hit_ship_index = owner.ships.find_index do |ship|
+      ship.keys.include?(shot.upcase.to_sym)
+    end
+
+    sunk = owner.ships[hit_ship_index].reduce(true) do |sunk, (coordinate, hit)|
+      sunk = false if not hit
+    end
+    binding.pry
+    return false if not sunk
+    owner.ships[hit_ship_index].length
   end
 
   def print_game_result_screen(winner)
