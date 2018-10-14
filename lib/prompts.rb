@@ -38,6 +38,7 @@ module Prompts
   EMPTY_BOARD = "A          \nB          \nC          \nD          \n"
   BOAT_HIT = "Boat Hit on %s! \u{1F4A5}\u{1F4A5}\u{1F4A5}"
   BOAT_MISS = "Boat Miss on %s! \u{1F4A6}\u{1F4A6}\u{1F4A6}"
+  SUNK_BOAT = "A Boat of length %s was just sunk"
   PLAYER_TURN = "~~~~~~~~~~~~~~~~~~~\n  PLAYERS TURN   \n~~~~~~~~~~~~~~~~~~~\n"
   COMPUTER_TURN = "~~~~~~~~~~~~~~~~~~~\n  COMPUTERS TURN   \n~~~~~~~~~~~~~~~~~~~\n"
 

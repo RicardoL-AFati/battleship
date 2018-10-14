@@ -22,7 +22,7 @@ class Game
   def run
     # puts show_start_prompt
     input = gets.chomp
-    sanitized_input = input.downcases
+    sanitized_input = input.downcase
     play if sanitized_input == "p" || sanitized_input == "play"
     show_instructions if sanitized_input == "i" || sanitized_input == "instructions"
     quit if sanitized_input == "q" || sanitized_input == "quit"
@@ -91,7 +91,8 @@ class Game
 
     coordinate = opponent.board.board_info[letter][number - 1]
     boat_hit = coordinate == "\u{26F5}"
-    sunk_boat = update_ships(shot, opponent) if boat_hit
+
+    sunk_boat = boat_hit ? update_ships(shot, opponent) : false
 
     update_board(letter, number, boat_hit, self) if opponent == @watson
     update_board(letter, number, boat_hit, opponent)
@@ -132,6 +133,7 @@ class Game
     p Prompts::GET_PLAYER_COORDINATE % length.to_s
     ship_choice = gets.chomp
     valid_choice = @player.valid_choice?(ship_choice, length)
+
     until valid_choice
       puts "Incorrect, remember to place your ship on the grid of A-D and 1-4 and dont overlap ships."
       ship_choice = gets.chomp
@@ -179,8 +181,9 @@ class Game
 
     sunk = owner.ships[hit_ship_index].reduce(true) do |sunk, (coordinate, hit)|
       sunk = false if not hit
+      sunk
     end
-    binding.pry
+    
     return false if not sunk
     owner.ships[hit_ship_index].length
   end

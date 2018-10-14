@@ -128,6 +128,7 @@ class GameTest < Minitest::Test
 
   def test_play_calls_other_methods
     skip
+    # all out of expects
     mocked_place_all_ships = MiniTest::Mock.new
     mocked_player_shot_sequence = MiniTest::Mock.new
     mocked_computer_shot_sequence = MiniTest::Mock.new
@@ -155,13 +156,13 @@ class GameTest < Minitest::Test
     $stdin = io
 
     result, stdout, stderr = OStreamCatcher.catch do
-      @game.get_player_ship_coordinates('two')
+      @game.get_player_ship_coordinates(2)
     end
 
     $stind = STDIN
 
     assert_equal result, ["A1", "A2"]
-    assert_equal stdout, "\"Enter the squares for a two-unit ship\"\nThat ship has been placed!\n"
+    assert_equal stdout, "\"Enter the squares for a 2-unit ship\"\nThat ship has been placed!\n"
   end
 
   def test_it_gets_player_two_length_ship_coordinates_with_invalid_coordinates
@@ -170,9 +171,9 @@ class GameTest < Minitest::Test
     io.puts "A1 A5"
     io.rewind
     $stdin = io
-    binding.pry
+
     result, stdout, stderr = OStreamCatcher.catch do
-      @game.get_player_ship_coordinates('two')
+      @game.get_player_ship_coordinates(2)
     end
 
     $stind = STDIN
@@ -187,29 +188,27 @@ class GameTest < Minitest::Test
     $stdin = io
 
     result, stdout, stderr = OStreamCatcher.catch do
-      @game.get_player_ship_coordinates('three')
+      @game.get_player_ship_coordinates(3)
     end
 
     $stind = STDIN
 
     assert_equal result, ["A1", "A2", "A3"]
-    assert_equal stdout, "\"Enter the squares for a three-unit ship\"\nThat ship has been placed!\n"
-  end
-
-  def test_it_shows_empty_board_once_ships_are_placed
-    skip
-    result, stdout, stderr = OStreamCatcher.catch do
-      @game.place_all_ships
-    end
-
-    assert_equal "#{Prompts::TOP}#{Prompts::EMPTY_BOARD}#{Prompts::BOTTOM}",
-    stdout
+    assert_equal stdout, "\"Enter the squares for a 3-unit ship\"\nThat ship has been placed!\n"
   end
 
   def test_it_shows_instructions
+    mocked_run = MiniTest::Mock.new
+    mocked_run.expect :call, nil
+
     result, stdout, stderr = OStreamCatcher.catch do
-      @game.show_instructions
+      @game.stub :run, mocked_run do
+        @game.show_instructions
+      end
     end
+
+    mocked_run.verify
+
     assert_equal stdout, "#{Prompts::INSTRUCTIONS}\n"
   end
 
@@ -250,8 +249,8 @@ class GameTest < Minitest::Test
 
     mocked_update_board.expect(:call, nil,[:A, 2, true, @game])
     mocked_update_board.expect(:call, nil,[:A, 2, true, @game.watson])
-    mocked_update_ships.expect(:call, nil,["A2", @game.watson])
-    mocked_give_feedback.expect(:call, nil,[true, "A2"])
+    mocked_update_ships.expect(:call, false,["A2", @game.watson])
+    mocked_give_feedback.expect(:call, nil,[true, "A2", false])
     @game.stub :update_board, mocked_update_board do
       @game.stub :update_ships, mocked_update_ships do
         @game.stub :give_feedback, mocked_give_feedback do
@@ -274,7 +273,7 @@ class GameTest < Minitest::Test
 
     mocked_update_board.expect(:call, nil,[:A, 2, false, @game])
     mocked_update_board.expect(:call, nil,[:A, 2, false, @game.watson])
-    mocked_give_feedback.expect(:call, nil,[false, "A2"])
+    mocked_give_feedback.expect(:call, nil,[false, "A2", false])
     @game.stub :update_board, mocked_update_board do
       @game.stub :give_feedback, mocked_give_feedback do
         @game.place_shot('A2', @game.watson)
@@ -288,18 +287,18 @@ class GameTest < Minitest::Test
 
   def test_it_gives_feedback_if_shot_was_a_hit
     result, stdout, stderr = OStreamCatcher.catch do
-      @game.give_feedback(true, "B4")
+      @game.give_feedback(true, "B4", false)
     end
     assert_equal "#{Prompts::BOAT_HIT % "B4"}\n", stdout
   end
-  
+
   def test_it_gives_feedback_if_shot_was_a_miss
     result, stdout, stderr = OStreamCatcher.catch do
-      @game.give_feedback(false, "B4")
+      @game.give_feedback(false, "B4", false)
     end
     assert_equal "#{Prompts::BOAT_MISS % "B4"}\n", stdout
   end
-  
+
   def test_it_updates_watsons_board_with_a_miss
     assert_equal " ", @game.watson.board.board_info[:A][1]
 
@@ -341,6 +340,13 @@ class GameTest < Minitest::Test
     assert @game.watson.ships[0][:A2]
   end
 
+  def test_it_returns_false_if_ship_was_not_sunk
+    @game.watson.ships << {A1: true, A2: false}
+    @game.watson.ships << {B1: false, C1: false, D1: false}
+
+    refute @game.sunk_boat?("A1", @game.watson)
+  end
+
   def test_it_renders_new_updated_board
     @game.board.board_info[:B][2] = "M"
 
@@ -348,7 +354,7 @@ class GameTest < Minitest::Test
       @game.render_new_board(@game)
     end
 
-    expected = "#{Prompts::TOP}#{new_board}#{Prompts::BOTTOM}"
+    expected = "#{Prompts::PLAYER_SHOTS}#{Prompts::TOP}#{new_board}#{Prompts::BOTTOM}"
 
     result, stdout, stderr = OStreamCatcher.catch do
       @game.render_new_board(@game)
@@ -362,13 +368,14 @@ class GameTest < Minitest::Test
     @game.watson.ships << {B1: true, C1: true, D1: true}
 
     refute @game.all_ships_sunk?(@game.watson)
-    
+
     @game.watson.ships[0][:A1] = true
-    
+
     assert @game.all_ships_sunk?(@game.watson)
   end
 
   def test_computer_sequence_runs_other_methods
+    skip
     skip
     # integration test
   end
