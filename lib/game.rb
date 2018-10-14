@@ -22,7 +22,7 @@ class Game
   def run
     # puts show_start_prompt
     input = gets.chomp
-    sanitized_input = input.downcase
+    sanitized_input = input.downcases
     play if sanitized_input == "p" || sanitized_input == "play"
     show_instructions if sanitized_input == "i" || sanitized_input == "instructions"
     quit if sanitized_input == "q" || sanitized_input == "quit"
@@ -33,11 +33,11 @@ class Game
     player_won, computer_won = false, false
     until player_won || computer_won
       print Prompts::PLAYER_TURN
-      player_won = player_shot_sequence 
+      player_won = player_shot_sequence
       print Prompts::COMPUTER_TURN
       computer_won = computer_shot_sequence
     end
-    
+
     winner = player_won ? @player : @watson
 
     print_game_result_screen
@@ -45,6 +45,7 @@ class Game
 
   def show_instructions
     puts Prompts::INSTRUCTIONS
+    run
   end
 
   def quit
@@ -60,7 +61,7 @@ class Game
     # require player input of [ENTER]
     all_ships_sunk?(@watson)
   end
-  
+
   def computer_shot_sequence
     valid_shots = find_valid_shot_positions
     shot = valid_shots.shuffle[0]
@@ -69,7 +70,7 @@ class Game
     render_new_board(@player)
     all_ships_sunk?(@player)
   end
-  
+
   def get_player_shot
     shot = gets.chomp
     valid = @player.coord_inside_board?(shot)
@@ -116,21 +117,21 @@ class Game
 
   def place_all_ships
     @watson.place_ships
-    ship_1 = get_player_ship_coordinates('two')
-    ship_2 = get_player_ship_coordinates('three')
+    ship_1 = get_player_ship_coordinates(2)
+    ship_2 = get_player_ship_coordinates(3)
     @player.place_ship(ship_1)
     @player.place_ship(ship_2)
     Prompts.print_empty_board
   end
 
   def get_player_ship_coordinates(length)
-    p Prompts::GET_PLAYER_COORDINATE % length
+    p Prompts::GET_PLAYER_COORDINATE % length.to_s
     ship_choice = gets.chomp
-    valid_choice = @player.valid_choice?(ship_choice)
+    valid_choice = @player.valid_choice?(ship_choice, length)
     until valid_choice
       puts "Incorrect, remember to place your ship on the grid of A-D and 1-4 and dont overlap ships."
       ship_choice = gets.chomp
-      valid_choice= @player.valid_choice?(ship_choice)
+      valid_choice= @player.valid_choice?(ship_choice, length)
     end
 
     puts 'That ship has been placed!'
@@ -141,7 +142,7 @@ class Game
     new_board = owner.board.board_info.reduce("") do |board_string, (row_name, columns)|
       printable_row = columns.reduce("") do |row_string, spot|
         row_string += "#{spot} "
-        row_string 
+        row_string
       end
       board_string += "#{row_name.to_s} #{printable_row} \n"
       board_string
@@ -167,7 +168,7 @@ class Game
     end
   end
 
-  def print_game_result_screen
-    
+  def print_game_result_screen(winner)
+
   end
 end
