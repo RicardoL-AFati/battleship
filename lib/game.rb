@@ -65,7 +65,7 @@ class Game
     key_press = gets
     until key_press == "\n"
       puts Prompts::PRESS_ENTER
-      key_press = gets.chomp
+      key_press = gets
     end
     all_ships_sunk?(@watson)
   end
@@ -208,11 +208,24 @@ class Game
       puts Prompts::LOSE_SCREEN
     end
     puts Prompts::SHOT_COUNT % winner.shot_history.count
-    show_game_time(Time.new)
+    time_taken = show_game_time(Time.new)
+    puts Prompts::TIME_TAKEN % time_taken
     exit
   end
 
   def show_game_time(now)
-    
+    time_diff = now - @start_time
+    convert_seconds(time_diff.round)
   end
+
+  def convert_seconds(seconds, minutes = 0)
+    if seconds <= 60 
+      return "#{minutes} minutes and #{seconds} seconds"
+    end
+  
+    min = minutes + 1 
+    sec = seconds - 60
+    convert_seconds(min, sec)
+  end
+  
 end
