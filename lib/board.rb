@@ -19,7 +19,7 @@ class Board
   def create_ship(coordinates)
     coordinates.each do |coord|
       row, column = coord.split('')
-      @board_info[row.to_sym][column.to_i - 1] = "\u{26F5}"
+      @board_info[row.to_sym][column.to_i - 1] = "\u{25CF}"
     end
   end
 end
