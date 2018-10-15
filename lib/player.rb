@@ -73,9 +73,14 @@ class Player
 
   def consecutive_coordinates?(coordinates)
     valid = true
-    coordinates.reduce(0) do |previous_value, coordinate|
+    letter, number = coordinates[0].split("")
+    initial = LETTERS.index(letter) + number.to_i - 1
+
+    coordinates.reduce(initial) do |previous_value, coordinate|
       letter, number = coordinate.split("")
       current_value = LETTERS.index(letter) + number.to_i
+      puts "#{current_value} current "
+      puts "#{previous_value} previous "
       valid = false if not current_value == previous_value + 1
       previous_value = current_value
       previous_value
