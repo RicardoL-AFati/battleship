@@ -1,6 +1,7 @@
 require './test/test_helper'
 require './lib/player'
 require './lib/board'
+require 'o_stream_catcher'
 
 class PlayerTest < Minitest::Test
   def setup
@@ -16,8 +17,23 @@ class PlayerTest < Minitest::Test
     assert_instance_of Board, @player.board
   end
 
+  def test_it_gets_valid_player_shot
+    io = StringIO.new
+    io.puts "A1"
+    io.rewind
+    $stdin = io
+
+    result, stdout, stderr = OStreamCatcher.catch do
+      @player.get_shot
+    end
+
+    $stdin = STDIN
+
+    assert_equal "A1", result
+    assert_equal "Shot has been made...\n", stdout
+  end
+
   def test_it_can_validate_placement_choice
-    skip
     choice = "B2 B3 B4"
     assert_equal ["B2", "B3", "B4"], @player.valid_choice?(choice, 3)
   end
@@ -29,7 +45,6 @@ class PlayerTest < Minitest::Test
   end
 
   def test_it_can_validate_placement_doesnt_overlap
-    skip
     @player.board.create_ship(['A1', 'B1'])
     choice = "A2 A3 A4"
 
@@ -97,10 +112,52 @@ class PlayerTest < Minitest::Test
     refute @player.consecutive_coordinates?(coordinates)
   end
 
-  def test_it_can_place_a_ship
+  def test_it_gets_player_two_length_ship_coordinates_with_valid_coordinates
+    io = StringIO.new
+    io.puts "A1 A2"
+    io.rewind
+    $stdin = io
+
+    result, stdout, stderr = OStreamCatcher.catch do
+      @player.get_ship_coordinates(2)
+    end
+
+    $stind = STDIN
+
+    assert_equal result, ["A1", "A2"]
+    assert_equal stdout, "\"Enter the squares for a 2-unit ship\"\nThat ship has been placed!\n"
+  end
+
+  def test_it_gets_player_two_length_ship_coordinates_with_invalid_coordinates
     skip
-    @player.place_ship(['A1', 'B1'])
-    #integration test
+    io = StringIO.new
+    io.puts "A1 A5"
+    io.rewind
+    $stdin = io
+
+    result, stdout, stderr = OStreamCatcher.catch do
+      @player.get_ship_coordinates(2)
+    end
+
+    $stind = STDIN
+    assert_equal stdout,
+    "\"Incorrect, remember to place your ship on the grid of A-D and 1-4 and dont overlap ships.\"\nThat ship has been placed!\n"
+  end
+
+  def test_it_gets_player_three_length_ship_coordinates_with_valid_coordinates
+    io = StringIO.new
+    io.puts "A1 A2 A3"
+    io.rewind
+    $stdin = io
+
+    result, stdout, stderr = OStreamCatcher.catch do
+      @player.get_ship_coordinates(3)
+    end
+
+    $stind = STDIN
+
+    assert_equal result, ["A1", "A2", "A3"]
+    assert_equal stdout, "\"Enter the squares for a 3-unit ship\"\nThat ship has been placed!\n"
   end
 
   def test_it_adds_to_ships
