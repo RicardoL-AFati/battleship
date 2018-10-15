@@ -85,7 +85,7 @@ class Game
     number = number.to_i
 
     coordinate = opponent.board.board_info[letter][number - 1]
-    boat_hit = coordinate == "\u{26F5}"
+    boat_hit = coordinate == "\u{25CF}"
 
     sunk_boat_length = boat_hit ? update_ships(shot, opponent) : nil
 

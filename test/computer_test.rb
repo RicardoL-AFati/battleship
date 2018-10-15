@@ -37,10 +37,10 @@ class ComputerTest < Minitest::Test
   def test_it_gets_coordinates_length_of_three_previous_ship
 
     @board.board_info = {
-      A: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
-      B: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
-      C: ["\u{26F5}","\u{26F5}","\u{26F5}","\u{26F5}"],
-      D: ["\u{26F5}","\u{26F5}","\u{26F5}","\u{26F5}"]
+      A: [" ","\u{25CF}","\u{25CF}","\u{25CF}"],
+      B: [" ","\u{25CF}","\u{25CF}","\u{25CF}"],
+      C: ["\u{25CF}","\u{25CF}","\u{25CF}","\u{25CF}"],
+      D: ["\u{25CF}","\u{25CF}","\u{25CF}","\u{25CF}"]
     }
 
     coordinates = @computer.get_coordinates(2)
@@ -49,10 +49,10 @@ class ComputerTest < Minitest::Test
 
   def test_it_gets_coordinates_length_of_three_previous_ship_v2
     @board.board_info = {
-      A: ["\u{26F5}","\u{26F5}","\u{26F5}","\u{26F5}"],
-      B: ["\u{26F5}","\u{26F5}","\u{26F5}","\u{26F5}"],
-      C: ["\u{26F5}","\u{26F5}"," ","\u{26F5}"],
-      D: ["\u{26F5}","\u{26F5}"," ","\u{26F5}"]
+      A: ["\u{25CF}","\u{25CF}","\u{25CF}","\u{25CF}"],
+      B: ["\u{25CF}","\u{25CF}","\u{25CF}","\u{25CF}"],
+      C: ["\u{25CF}","\u{25CF}"," ","\u{25CF}"],
+      D: ["\u{25CF}","\u{25CF}"," ","\u{25CF}"]
     }
     coordinates = @computer.get_coordinates(2)
     assert_equal ["C3", "D3"], coordinates
@@ -60,10 +60,10 @@ class ComputerTest < Minitest::Test
 
   def test_it_gets_coordinates_length_of_two_previous_ship
     @board.board_info = {
-      A: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
-      B: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
-      C: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
-      D: ["\u{26F5}","\u{26F5}","\u{26F5}","\u{26F5}"]
+      A: [" ","\u{25CF}","\u{25CF}","\u{25CF}"],
+      B: [" ","\u{25CF}","\u{25CF}","\u{25CF}"],
+      C: [" ","\u{25CF}","\u{25CF}","\u{25CF}"],
+      D: ["\u{25CF}","\u{25CF}","\u{25CF}","\u{25CF}"]
     }
 
     coordinates = @computer.get_coordinates(3)
@@ -72,10 +72,10 @@ class ComputerTest < Minitest::Test
 
   def test_it_gets_coordinates_length_of_two_previous_ship_v2
     @board.board_info = {
-      A: ["\u{26F5}","\u{26F5}","\u{26F5}","\u{26F5}"],
-      B: ["\u{26F5}"," ","\u{26F5}","\u{26F5}"],
-      C: ["\u{26F5}"," ","\u{26F5}","\u{26F5}"],
-      D: ["\u{26F5}"," ","\u{26F5}","\u{26F5}"]
+      A: ["\u{25CF}","\u{25CF}","\u{25CF}","\u{25CF}"],
+      B: ["\u{25CF}"," ","\u{25CF}","\u{25CF}"],
+      C: ["\u{25CF}"," ","\u{25CF}","\u{25CF}"],
+      D: ["\u{25CF}"," ","\u{25CF}","\u{25CF}"]
     }
     coordinates = @computer.get_coordinates(3)
     assert_equal ["B2", "C2", "D2"], coordinates
@@ -116,10 +116,10 @@ class ComputerTest < Minitest::Test
 
   def test_it_finds_valid_positions_with_filled_board
     @computer.board.board_info = {
-      A: ["\u{26F5}","\u{26F5}","\u{26F5}","\u{26F5}"],
-      B: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
-      C: [" ","\u{26F5}","\u{26F5}","\u{26F5}"],
-      D: [" ","\u{26F5}","\u{26F5}","\u{26F5}"]
+      A: ["\u{25CF}","\u{25CF}","\u{25CF}","\u{25CF}"],
+      B: [" ","\u{25CF}","\u{25CF}","\u{25CF}"],
+      C: [" ","\u{25CF}","\u{25CF}","\u{25CF}"],
+      D: [" ","\u{25CF}","\u{25CF}","\u{25CF}"]
     }
 
     expected = ["B1", "C1", "D1"]

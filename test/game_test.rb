@@ -190,7 +190,7 @@ class GameTest < Minitest::Test
   end
 
   def test_it_calls_other_methods_when_placing_player_shot_hit
-    @game.watson.board.board_info[:A][1] = "\u{26F5}"
+    @game.watson.board.board_info[:A][1] = "\u{25CF}"
 
     mocked_update_board = MiniTest::Mock.new
     mocked_update_ships = MiniTest::Mock.new
