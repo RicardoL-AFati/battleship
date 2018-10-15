@@ -6,11 +6,12 @@ require './lib/board'
 require 'pry'
 
 class Game
-  attr_reader :player, :watson, :board
+  attr_reader :player, :watson, :board, :start_time
   def initialize
    @player = Player.new(Board.new)
    @watson = Computer.new(Board.new)
    @board = Board.new
+   @start_time = nil
   end
 
   def show_start_prompt
@@ -30,6 +31,7 @@ class Game
   end
 
   def play
+    @start_time = Time.new
     place_all_ships
     player_won, computer_won = false, false
     until player_won || computer_won
@@ -206,6 +208,11 @@ class Game
       puts Prompts::LOSE_SCREEN
     end
     puts Prompts::SHOT_COUNT % winner.shot_history.count
+    show_game_time(Time.new)
     exit
+  end
+
+  def show_game_time(now)
+    
   end
 end
