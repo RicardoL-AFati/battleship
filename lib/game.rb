@@ -16,12 +16,12 @@ class Game
 
   def show_start_prompt
     start_prompt = "#{Prompts::WELCOME}\n#{Prompts::START}> "
-    # print start_prompt
+    print start_prompt
     start_prompt
   end
 
   def run
-    # show_start_prompt
+    show_start_prompt
     input = gets.chomp
     sanitized_input = input.downcase
     play if sanitized_input == "p" || sanitized_input == "play"
@@ -57,7 +57,7 @@ class Game
 
   def player_shot_sequence
     puts "Make your shot by entering a single coordinate:"
-    valid_shot = get_player_shot
+    valid_shot = @player.get_shot
     place_shot(valid_shot, @watson)
     add_to_shot_history(valid_shot, @player)
     render_new_board(self)
@@ -77,19 +77,6 @@ class Game
     add_to_shot_history(shot, @watson)
     render_new_board(@player)
     all_ships_sunk?(@player)
-  end
-
-  def get_player_shot
-    shot = gets.chomp
-    valid = @player.coord_inside_board?(shot)
-    until valid
-      puts "Incorrect, remember to place your shot on the grid of A-D and 1-4."
-      shot = gets.chomp
-      valid = @player.coord_inside_board?(shot)
-    end
-
-    puts 'Shot has been made...'
-    shot
   end
 
   def place_shot(shot, opponent)
@@ -134,25 +121,11 @@ class Game
 
   def place_all_ships
     @watson.place_ships
-    ship_1 = get_player_ship_coordinates(2)
-    ship_2 = get_player_ship_coordinates(3)
+    ship_1 = @player.get_ship_coordinates(2)
+    ship_2 = @player.get_ship_coordinates(3)
     @player.place_ship(ship_1)
     @player.place_ship(ship_2)
     Prompts.print_empty_board
-  end
-
-  def get_player_ship_coordinates(length)
-    p Prompts::GET_PLAYER_COORDINATE % length.to_s
-    ship_choice = gets.chomp
-    valid_choice = @player.valid_choice?(ship_choice, length)
-    until valid_choice
-      puts "Incorrect, remember to place your ship on the grid of A-D and 1-4 and dont overlap ships."
-      ship_choice = gets.chomp
-      valid_choice= @player.valid_choice?(ship_choice, length)
-    end
-
-    puts 'That ship has been placed!'
-    valid_choice
   end
 
   def render_new_board(owner)
@@ -225,5 +198,4 @@ class Game
     sec = seconds - 60
     convert_seconds(min, sec)
   end
-
 end

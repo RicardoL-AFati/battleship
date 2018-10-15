@@ -10,7 +10,6 @@ class Board
       C: [' ',' ',' ',' '],
       D: [' ',' ',' ',' ']
     }
-    @ships = []
   end
 
   def add_owner(owner)

@@ -11,6 +11,33 @@ class Player
     @ships = []
   end
 
+  def get_shot
+    shot = gets.chomp
+    valid = coord_inside_board?(shot)
+    until valid
+      puts "Incorrect, remember to place your shot on the grid of A-D and 1-4."
+      shot = gets.chomp
+      valid = coord_inside_board?(shot)
+    end
+
+    puts 'Shot has been made...'
+    shot
+  end
+
+  def get_ship_coordinates(length)
+    p Prompts::GET_PLAYER_COORDINATE % length.to_s
+    ship_choice = gets.chomp
+    valid_choice = valid_choice?(ship_choice, length)
+    until valid_choice
+      puts "Incorrect, remember to place your ship on the grid of A-D and 1-4 and dont overlap ships."
+      ship_choice = gets.chomp
+      valid_choice= valid_choice?(ship_choice, length)
+    end
+
+    puts 'That ship has been placed!'
+    valid_choice
+  end
+
   def valid_choice?(choice, length)
     choice_list = choice.split(" ")
     return false if not choice_list.length == length

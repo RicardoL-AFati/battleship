@@ -155,54 +155,6 @@ class GameTest < Minitest::Test
     mocked_computer_shot_sequence.verify
   end
 
-  def test_it_gets_player_two_length_ship_coordinates_with_valid_coordinates
-    io = StringIO.new
-    io.puts "A1 A2"
-    io.rewind
-    $stdin = io
-
-    result, stdout, stderr = OStreamCatcher.catch do
-      @game.get_player_ship_coordinates(2)
-    end
-
-    $stind = STDIN
-
-    assert_equal result, ["A1", "A2"]
-    assert_equal stdout, "\"Enter the squares for a 2-unit ship\"\nThat ship has been placed!\n"
-  end
-
-  def test_it_gets_player_two_length_ship_coordinates_with_invalid_coordinates
-    skip
-    io = StringIO.new
-    io.puts "A1 A5"
-    io.rewind
-    $stdin = io
-
-    result, stdout, stderr = OStreamCatcher.catch do
-      @game.get_player_ship_coordinates(2)
-    end
-
-    $stind = STDIN
-    assert_equal stdout,
-    "\"Incorrect, remember to place your ship on the grid of A-D and 1-4 and dont overlap ships.\"\nThat ship has been placed!\n"
-  end
-
-  def test_it_gets_player_three_length_ship_coordinates_with_valid_coordinates
-    io = StringIO.new
-    io.puts "A1 A2 A3"
-    io.rewind
-    $stdin = io
-
-    result, stdout, stderr = OStreamCatcher.catch do
-      @game.get_player_ship_coordinates(3)
-    end
-
-    $stind = STDIN
-
-    assert_equal result, ["A1", "A2", "A3"]
-    assert_equal stdout, "\"Enter the squares for a 3-unit ship\"\nThat ship has been placed!\n"
-  end
-
   def test_it_shows_instructions
     mocked_run = MiniTest::Mock.new
     mocked_run.expect :call, nil
@@ -229,23 +181,12 @@ class GameTest < Minitest::Test
 
   def test_it_shows_prompts
     expected = "#{Prompts::WELCOME}\n#{Prompts::START}> "
-    assert_equal expected, @game.show_start_prompt
-  end
-
-  def test_it_gets_valid_player_shot
-    io = StringIO.new
-    io.puts "A1"
-    io.rewind
-    $stdin = io
 
     result, stdout, stderr = OStreamCatcher.catch do
-      @game.get_player_shot
+      @game.show_start_prompt
     end
 
-    $stdin = STDIN
-
-    assert_equal "A1", result
-    assert_equal "Shot has been made...\n", stdout
+    assert_equal expected, stdout
   end
 
   def test_it_calls_other_methods_when_placing_player_shot_hit
