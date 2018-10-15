@@ -45,6 +45,7 @@ module Prompts
   LOSE_SCREEN = "~~~~~~~~~~~~~~~~~~~\n  \u{1F62D}YOU LOST..\u{1F62D}  \n~~~~~~~~~~~~~~~~~~~\n"
   SHOT_COUNT = "============\nThe game was won in %s turns\n============\n"
   PRESS_ENTER = "Press ENTER to continue"
+  TIME_TAKEN = "Total time taken for this game is %s"
   def self.print_empty_board
     print TOP
     print EMPTY_BOARD
