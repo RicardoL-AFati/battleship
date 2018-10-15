@@ -285,6 +285,14 @@ class GameTest < Minitest::Test
     mocked_give_feedback.verify
   end
 
+  def test_it_records_shot_in_history_player
+    assert_empty @game.player.shot_history
+
+    @game.add_to_shot_history("A1", @game.player)
+
+    assert_equal ["A1"], @game.player.shot_history
+  end
+
   def test_it_gives_feedback_if_shot_was_a_hit
     result, stdout, stderr = OStreamCatcher.catch do
       @game.give_feedback(true, "B4", false)
@@ -311,6 +319,24 @@ class GameTest < Minitest::Test
       @game.give_feedback(true, "B4", 2)
     end
     assert_equal "#{Prompts::BOAT_HIT % "B4"}\n#{Prompts::SUNK_BOAT % 2}\n", stdout
+  end
+
+  def test_it_prints_game_over_lose_screen
+    result, stdout, stderr = OStreamCatcher.catch do
+      @game.print_game_result_screen(@game.watson)
+    end
+
+    assert_equal "#{Prompts::LOSE_SCREEN}#{Prompts::SHOT_COUNT % @game.watson.shot_history.count}",
+    stdout
+  end
+
+  def test_it_prints_game_over_win_screen
+    result, stdout, stderr = OStreamCatcher.catch do
+      @game.print_game_result_screen(@game.player)
+    end
+    
+    assert_equal "#{Prompts::WIN_SCREEN}#{Prompts::SHOT_COUNT % @game.player.shot_history.count}",
+    stdout
   end
 
   def test_it_updates_watsons_board_with_a_miss

@@ -15,17 +15,18 @@ class Game
 
   def show_start_prompt
     start_prompt = "#{Prompts::WELCOME}\n#{Prompts::START}> "
-    # print start_prompt
+    print start_prompt
     start_prompt
   end
 
   def run
-    # puts show_start_prompt
+    show_start_prompt
     input = gets.chomp
     sanitized_input = input.downcase
     play if sanitized_input == "p" || sanitized_input == "play"
     show_instructions if sanitized_input == "i" || sanitized_input == "instructions"
     quit if sanitized_input == "q" || sanitized_input == "quit"
+    run
   end
 
   def play
@@ -34,13 +35,12 @@ class Game
     until player_won || computer_won
       print Prompts::PLAYER_TURN
       player_won = player_shot_sequence
+      print_game_result_screen(@player) if player_won
       print Prompts::COMPUTER_TURN
       computer_won = computer_shot_sequence
     end
 
-    winner = player_won ? @player : @watson
-
-    print_game_result_screen
+    print_game_result_screen(@watson)
   end
 
   def show_instructions
@@ -50,15 +50,21 @@ class Game
 
   def quit
     puts "k bai \u{1F630}"
+    exit
   end
 
   def player_shot_sequence
     puts "Make your shot by entering a single coordinate:"
     valid_shot = get_player_shot
     place_shot(valid_shot, @watson)
-    # record in shot history
+    add_to_shot_history(valid_shot, @player)
     render_new_board(self)
-    # require player input of [ENTER]
+    puts Prompts::PRESS_ENTER
+    key_press = gets
+    until key_press == "\n"
+      puts Prompts::PRESS_ENTER
+      key_press = gets.chomp
+    end
     all_ships_sunk?(@watson)
   end
 
@@ -66,7 +72,7 @@ class Game
     valid_shots = find_valid_shot_positions
     shot = valid_shots.shuffle[0]
     place_shot(shot, @player)
-    # record in shot history
+    add_to_shot_history(shot, @watson)
     render_new_board(@player)
     all_ships_sunk?(@player)
   end
@@ -97,6 +103,10 @@ class Game
     update_board(letter, number, boat_hit, self) if opponent == @watson
     update_board(letter, number, boat_hit, opponent)
     give_feedback(boat_hit, shot, sunk_boat_length)
+  end
+
+  def add_to_shot_history(shot, owner)
+    owner.shot_history << shot
   end
 
   def give_feedback(boat_hit, shot, sunk_boat_length)
@@ -133,10 +143,11 @@ class Game
     p Prompts::GET_PLAYER_COORDINATE % length.to_s
     ship_choice = gets.chomp
     valid_choice = @player.valid_choice?(ship_choice, length)
-
+    puts "#{valid_choice} outside until"
     until valid_choice
       puts "Incorrect, remember to place your ship on the grid of A-D and 1-4 and dont overlap ships."
       ship_choice = gets.chomp
+      puts "#{valid_choice} inside until"
       valid_choice= @player.valid_choice?(ship_choice, length)
     end
 
@@ -189,6 +200,12 @@ class Game
   end
 
   def print_game_result_screen(winner)
-
+    if winner == @player
+      puts Prompts::WIN_SCREEN
+    else
+      puts Prompts::LOSE_SCREEN
+    end
+    puts Prompts::SHOT_COUNT % winner.shot_history.count
+    exit
   end
 end

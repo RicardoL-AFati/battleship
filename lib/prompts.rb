@@ -41,7 +41,10 @@ module Prompts
   SUNK_BOAT = "A Boat of length %s was just sunk"
   PLAYER_TURN = "~~~~~~~~~~~~~~~~~~~\n  PLAYERS TURN   \n~~~~~~~~~~~~~~~~~~~\n"
   COMPUTER_TURN = "~~~~~~~~~~~~~~~~~~~\n  COMPUTERS TURN   \n~~~~~~~~~~~~~~~~~~~\n"
-
+  WIN_SCREEN = "~~~~~~~~~~~~~~~~~~~\n  \u{1F929}!!YOU WON!!\u{1F929}  \n~~~~~~~~~~~~~~~~~~~\n"
+  LOSE_SCREEN = "~~~~~~~~~~~~~~~~~~~\n  \u{1F62D}YOU LOST..\u{1F62D}  \n~~~~~~~~~~~~~~~~~~~\n"
+  SHOT_COUNT = "============\nThe game was won in %s turns\n============\n"
+  PRESS_ENTER = "Press ENTER to continue"
   def self.print_empty_board
     print TOP
     print EMPTY_BOARD

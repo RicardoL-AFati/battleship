@@ -1,5 +1,5 @@
-# require './lib/game'
-#
-# game = Game.new
-#
-# game.run
+require './lib/game'
+
+game = Game.new
+
+game.run
