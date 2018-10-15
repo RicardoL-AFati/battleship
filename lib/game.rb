@@ -16,12 +16,12 @@ class Game
 
   def show_start_prompt
     start_prompt = "#{Prompts::WELCOME}\n#{Prompts::START}> "
-    print start_prompt
+    # print start_prompt
     start_prompt
   end
 
   def run
-    show_start_prompt
+    # show_start_prompt
     input = gets.chomp
     sanitized_input = input.downcase
     play if sanitized_input == "p" || sanitized_input == "play"
@@ -145,11 +145,9 @@ class Game
     p Prompts::GET_PLAYER_COORDINATE % length.to_s
     ship_choice = gets.chomp
     valid_choice = @player.valid_choice?(ship_choice, length)
-    puts "#{valid_choice} outside until"
     until valid_choice
       puts "Incorrect, remember to place your ship on the grid of A-D and 1-4 and dont overlap ships."
       ship_choice = gets.chomp
-      puts "#{valid_choice} inside until"
       valid_choice= @player.valid_choice?(ship_choice, length)
     end
 
@@ -219,13 +217,13 @@ class Game
   end
 
   def convert_seconds(seconds, minutes = 0)
-    if seconds <= 60 
+    if seconds <= 60
       return "#{minutes} minutes and #{seconds} seconds"
     end
-  
-    min = minutes + 1 
+
+    min = minutes + 1
     sec = seconds - 60
     convert_seconds(min, sec)
   end
-  
+
 end
