@@ -73,7 +73,9 @@ class Game
   def computer_shot_sequence
     valid_shots = find_valid_shot_positions
     shot = valid_shots.shuffle[0]
-    place_shot(shot, @player)
+    shot = @watson.place_intelegent_shot if @watson.on_target
+    boat_hit = place_shot(shot, @player)
+    @watson.on_target = boat_hit
     add_to_shot_history(shot, @watson)
     render_new_board(@player)
     all_ships_sunk?(@player)
@@ -92,6 +94,7 @@ class Game
     update_board(letter, number, boat_hit, self) if opponent == @watson
     update_board(letter, number, boat_hit, opponent)
     give_feedback(boat_hit, shot, sunk_boat_length)
+    boat_hit
   end
 
   def add_to_shot_history(shot, owner)
