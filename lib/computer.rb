@@ -79,7 +79,7 @@ class Computer
 
   def place_smart_shot(valid_positions)
     valid_shot = nil
-    
+
     until valid_shot
       if ai_shot_count == 0
         valid_shot = down(valid_positions)
@@ -123,8 +123,8 @@ class Computer
 
   def up(valid_positions)
     letter, number = successful_shot.split("")
+    return false if LETTERS.index(letter) - 1 < 0
     valid_next_letter = LETTERS[LETTERS.index(letter) - 1]
-    return false if not valid_next_letter
     valid_shot = valid_positions.include?("#{valid_next_letter}#{number}")
     return false if not valid_shot
     "#{valid_next_letter}#{number}"

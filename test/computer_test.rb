@@ -260,29 +260,56 @@ class ComputerTest < Minitest::Test
   end
 
   def test_it_returns_smart_shot_right_due_to_board_constraints
-    @computer.successful_shot = "A3"
+    @computer.successful_shot = "D3"
 
-    invalid_coordinates = ["A3", "B3"]
     valid_coordinates = @valid_positions.reject do |coordinate|
-      invalid_coordinates.include?(coordinate)
+      coordinate == "D3"
     end
 
-    assert_equal "A4", @computer.place_smart_shot(valid_coordinates)
+    assert_equal "D4", @computer.place_smart_shot(valid_coordinates)
   end
 
   def test_it_returns_smart_shot_up_after_invalid
     @computer.successful_shot = "B3"
 
-    invalid_coordinates = ["A3", "B3", ""]
+    invalid_coordinates = ["C3", "B4"]
     valid_coordinates = @valid_positions.reject do |coordinate|
       invalid_coordinates.include?(coordinate)
     end
 
-    assert_equal "A4", @computer.place_smart_shot(valid_coordinates)
+    assert_equal "A3", @computer.place_smart_shot(valid_coordinates)
   end
 
-  def test_it_returns_smart_shot_left
-    skip
+  def test_it_returns_smart_shot_up_due_to_board_constraints
+    @computer.successful_shot = "D4"
 
+    valid_coordinates = @valid_positions.reject do |coordinate|
+      coordinate == "D4"
+    end
+
+    assert_equal "C4", @computer.place_smart_shot(valid_coordinates)
+  end
+
+
+  def test_it_returns_smart_shot_left_after_invalid
+    @computer.successful_shot = "B3"
+
+    invalid_coordinates = ["C3", "B4", "A3"]
+    valid_coordinates = @valid_positions.reject do |coordinate|
+      invalid_coordinates.include?(coordinate)
+    end
+
+    assert_equal "B2", @computer.place_smart_shot(valid_coordinates)
+  end
+
+  def test_it_returns_smart_shot_left_due_to_board_constraints_and_invalid
+    @computer.successful_shot = "A4"
+
+    invalid_coordinates = ["A4", "B4"]
+    valid_coordinates = @valid_positions.reject do |coordinate|
+      invalid_coordinates.include?(coordinate)
+    end
+
+    assert_equal "A3", @computer.place_smart_shot(valid_coordinates)
   end
 end
