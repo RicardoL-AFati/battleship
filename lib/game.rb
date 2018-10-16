@@ -73,7 +73,8 @@ class Game
   def computer_shot_sequence
     valid_shots = find_valid_shot_positions
     shot = valid_shots.shuffle[0]
-    shot = @watson.place_smart_shot(valid_shots) if @watson.successful_shot
+    smart_shot = @watson.place_smart_shot(valid_shots) if @watson.successful_shot
+    shot = smart_shot if smart_shot
     place_shot(shot, @player)
     add_to_shot_history(shot, @watson)
     render_new_board(@player)
@@ -87,9 +88,9 @@ class Game
 
     coordinate = opponent.board.board_info[letter][number - 1]
     boat_hit = coordinate == "\u{25CF}"
-    @watson.successful_shot = shot if boat_hit
+    @watson.successful_shot = shot if boat_hit && opponent == @player
     sunk_boat_length = boat_hit ? update_ships(shot, opponent) : nil
-
+    @watson.successful_shot = false if sunk_boat_length && opponent == @player
     update_board(letter, number, boat_hit, self) if opponent == @watson
     update_board(letter, number, boat_hit, opponent)
     give_feedback(boat_hit, shot, sunk_boat_length)
@@ -198,6 +199,6 @@ class Game
 
     min = minutes + 1
     sec = seconds - 60
-    convert_seconds(min, sec)
+    convert_seconds(sec, min)
   end
 end
