@@ -2,6 +2,7 @@ class Computer
   LETTERS = ["A","B","C","D"]
   DIRECTIONS = [:H, :V]
   attr_reader :board, :ships, :shot_history
+  attr_accessor :successful_shot, :ai_shot_count
   def initialize(board)
     @board = board
     @shot_history = []
@@ -78,25 +79,26 @@ class Computer
 
   def place_smart_shot(valid_positions)
     valid_shot = nil
+    
     until valid_shot
       if ai_shot_count == 0
         valid_shot = down(valid_positions)
         return valid_shot if valid_shot
-        ai_shot_count += 1
+        @ai_shot_count += 1
       elsif ai_shot_count == 1
         valid_shot = right(valid_positions)
         return valid_shot if valid_shot
-        ai_shot_count += 1
+        @ai_shot_count += 1
       elsif ai_shot_count == 2
         valid_shot = up(valid_positions)
         return valid_shot if valid_shot
-        ai_shot_count += 1
+        @ai_shot_count += 1
       else
         valid_shot = left(valid_positions)
         return valid_shot if valid_shot
-        ai_shot_count += 1
+        @ai_shot_count += 1
       end
-      ai_shot_count = ai_shot_count > 3 ? 0 : ai_shot_count
+      @ai_shot_count = ai_shot_count > 3 ? 0 : ai_shot_count
     end
     valid_shot
   end

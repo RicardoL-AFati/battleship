@@ -378,4 +378,17 @@ class GameTest < Minitest::Test
 
     assert_equal expected, result
   end
+
+  def test_it_updates_computer_when_a_succesful_shot_was_placed
+    @game = Game.new
+
+    @game.player.ships << {A3: false, A4: false}
+    @game.player.board.board_info[:A][2] = "\u{25CF}"
+
+    result, stdout, stderr = OStreamCatcher.catch do
+      assert @game.place_shot("A3", @game.player)
+    end
+
+    assert_equal "A3", @game.watson.successful_shot
+  end
 end

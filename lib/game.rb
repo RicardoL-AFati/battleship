@@ -73,7 +73,7 @@ class Game
   def computer_shot_sequence
     valid_shots = find_valid_shot_positions
     shot = valid_shots.shuffle[0]
-    shot = @watson.place_smart_shot if @watson.successful_shot
+    shot = @watson.place_smart_shot(valid_shots) if @watson.successful_shot
     place_shot(shot, @player)
     add_to_shot_history(shot, @watson)
     render_new_board(@player)

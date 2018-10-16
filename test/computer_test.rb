@@ -1,4 +1,6 @@
 require './test/test_helper'
+require 'o_stream_catcher'
+require './lib/game'
 require './lib/computer'
 require './lib/board'
 
@@ -7,11 +9,6 @@ class ComputerTest < Minitest::Test
     @board = Board.new
     @computer = Computer.new(@board)
     @valid_positions = ["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "D1", "D2", "D3", "D4"]
-  end
-
-  def test_it_gets_ship_coordinates_and_passes_to_board_for_creation
-    skip
-    #integration test
   end
 
   def test_it_gets_coordinates_length_of_two_no_previous_ship
@@ -137,5 +134,155 @@ class ComputerTest < Minitest::Test
     assert_equal 2, @computer.ships.length
     assert_equal 2, @computer.ships[0].length
     assert_equal 3, @computer.ships[1].length
+  end
+
+  def test_it_calls_down_first_to_place_smart_shot
+    @computer.successful_shot = "A3"
+    mocked_down = Minitest::Mock.new
+
+    mocked_down.expect(:call, "B3", [@valid_positions.reject {|coordinate| coordinate == "A3"}])
+
+    @computer.stub :down, mocked_down do
+      @computer.place_smart_shot(@valid_positions.reject {|coordinate| coordinate == "A3"})
+    end
+
+    mocked_down.verify
+  end
+
+  def test_it_calls_right_second_to_place_smart_shot
+    @computer.successful_shot = "A3"
+
+    mocked_down = Minitest::Mock.new
+    mocked_right = MiniTest::Mock.new
+
+    invalid_coordinates = ["A3", "B3"]
+    valid_coordinates = @valid_positions.reject do |coordinate|
+      invalid_coordinates.include?(coordinate)
+    end
+
+    mocked_down.expect(:call, false, [valid_coordinates])
+    mocked_right.expect(:call, "A4", [valid_coordinates])
+
+    @computer.stub :down, mocked_down do
+      @computer.stub :right, mocked_right do
+        @computer.place_smart_shot(valid_coordinates)
+      end
+    end
+
+    mocked_down.verify
+    mocked_right.verify
+  end
+
+  def test_it_calls_up_third_to_place_smart_shot
+    @computer.successful_shot = "B3"
+
+    mocked_down = Minitest::Mock.new
+    mocked_right = MiniTest::Mock.new
+    mocked_up = MiniTest::Mock.new
+
+    invalid_coordinates = ["B3", "C3", "B4"]
+    valid_coordinates = @valid_positions.reject do |coordinate|
+      invalid_coordinates.include?(coordinate)
+    end
+
+    mocked_down.expect(:call, false, [valid_coordinates])
+    mocked_right.expect(:call, false, [valid_coordinates])
+    mocked_up.expect(:call, "A3", [valid_coordinates])
+
+    @computer.stub :down, mocked_down do
+      @computer.stub :right, mocked_right do
+        @computer.stub :up, mocked_up do
+          @computer.place_smart_shot(valid_coordinates)
+        end
+      end
+    end
+
+    mocked_down.verify
+    mocked_right.verify
+    mocked_up.verify
+  end
+
+
+  def test_it_calls_left_fourth_to_place_smart_shot_down
+    @computer.successful_shot = "A3"
+
+    mocked_down = Minitest::Mock.new
+    mocked_right = MiniTest::Mock.new
+    mocked_up = MiniTest::Mock.new
+    mocked_left = MiniTest::Mock.new
+
+    invalid_coordinates = ["A3", "B3", "A4"]
+    valid_coordinates = @valid_positions.reject do |coordinate|
+      invalid_coordinates.include?(coordinate)
+    end
+
+    mocked_down.expect(:call, false, [valid_coordinates])
+    mocked_right.expect(:call, false, [valid_coordinates])
+    mocked_up.expect(:call, false, [valid_coordinates])
+    mocked_left.expect(:call, "A2", [valid_coordinates])
+
+    @computer.stub :down, mocked_down do
+      @computer.stub :right, mocked_right do
+        @computer.stub :up, mocked_up do
+          @computer.stub :left, mocked_left do
+            @computer.place_smart_shot(valid_coordinates)
+          end
+        end
+      end
+    end
+
+    mocked_down.verify
+    mocked_right.verify
+    mocked_up.verify
+    mocked_left.verify
+  end
+
+  def test_it_returns_smart_shot_down
+    @computer.successful_shot = "A3"
+
+
+    valid_coordinates = @valid_positions.reject do |coordinate|
+      coordinate == "A3"
+    end
+
+    assert_equal "B3", @computer.place_smart_shot(valid_coordinates)
+  end
+
+  def test_it_returns_smart_shot_right_after_invalid
+    @computer.successful_shot = "A3"
+
+    invalid_coordinates = ["A3", "B3"]
+    valid_coordinates = @valid_positions.reject do |coordinate|
+      invalid_coordinates.include?(coordinate)
+    end
+
+    assert_equal "A4", @computer.place_smart_shot(valid_coordinates)
+  end
+
+  def test_it_returns_smart_shot_right_due_to_board_constraints
+    @computer.successful_shot = "A3"
+
+    invalid_coordinates = ["A3", "B3"]
+    valid_coordinates = @valid_positions.reject do |coordinate|
+      invalid_coordinates.include?(coordinate)
+    end
+
+    assert_equal "A4", @computer.place_smart_shot(valid_coordinates)
+  end
+
+  def test_it_returns_smart_shot_up_after_invalid
+    @computer.successful_shot = "B3"
+
+    invalid_coordinates = ["A3", "B3", ""]
+    valid_coordinates = @valid_positions.reject do |coordinate|
+      invalid_coordinates.include?(coordinate)
+    end
+
+    assert_equal "A4", @computer.place_smart_shot(valid_coordinates)
+  end
+
+  def test_it_returns_smart_shot_left
+    skip
+
   end
 end
