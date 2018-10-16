@@ -6,7 +6,8 @@ class Computer
     @board = board
     @shot_history = []
     @ships = []
-    @on_target = false
+    @successful_shot = nil
+    @ai_shot_count = 0
     assign_board_owner
   end
 
@@ -75,19 +76,65 @@ class Computer
     end
   end
 
-  def place_smart_shot
-    last_shot = @shot_history.last
-    next_shot(down(last_shot))
+  def place_smart_shot(valid_positions)
+    valid_shot = nil
+    until valid_shot
+      if ai_shot_count == 0
+        valid_shot = down(valid_positions)
+        return valid_shot if valid_shot
+        ai_shot_count += 1
+      elsif ai_shot_count == 1
+        valid_shot = right(valid_positions)
+        return valid_shot if valid_shot
+        ai_shot_count += 1
+      elsif ai_shot_count == 2
+        valid_shot = up(valid_positions)
+        return valid_shot if valid_shot
+        ai_shot_count += 1
+      else
+        valid_shot = left(valid_positions)
+        return valid_shot if valid_shot
+        ai_shot_count += 1
+      end
+      ai_shot_count = ai_shot_count > 3 ? 0 : ai_shot_count
+    end
+    valid_shot
   end
 
-  def next
-    
+  def down(valid_positions)
+    letter, number = successful_shot.split("")
+    valid_next_letter = LETTERS[LETTERS.index(letter) + 1]
+    return false if not valid_next_letter
+    valid_shot = valid_positions.include?("#{valid_next_letter}#{number}")
+    return false if not valid_shot
+    "#{valid_next_letter}#{number}"
   end
 
-  def down(last_shot)
-    letter, number = last_shot.split("")
-    next_letter = LETTER[LETTERS.index(letter) + 1]
-    # HOW DO WE KEEP TRACK OF LAST SUCCESSFUL HIT
+  def right(valid_positions)
+    letter, number = successful_shot.split("")
+    number = number.to_i + 1
+    return false if number > 4
+    valid_shot = valid_positions.include?("#{letter}#{number}")
+    return false if not valid_shot
+    "#{letter}#{number}"
+  end
+
+  def up(valid_positions)
+    letter, number = successful_shot.split("")
+    valid_next_letter = LETTERS[LETTERS.index(letter) - 1]
+    return false if not valid_next_letter
+    valid_shot = valid_positions.include?("#{valid_next_letter}#{number}")
+    return false if not valid_shot
+    "#{valid_next_letter}#{number}"
+  end
+
+  def left(valid_positions)
+    letter, number = successful_shot.split("")
+    number = number.to_i - 1
+    return false if number < 1
+    valid_shot = valid_positions.include?("#{letter}#{number}")
+    return false if not valid_shot
+    "#{letter}#{number}"
   end
 
   def add_to_ships(*ships_coordinates)
