@@ -6,6 +6,7 @@ class Computer
     @board = board
     @shot_history = []
     @ships = []
+    @on_target = false
     assign_board_owner
   end
 
@@ -72,6 +73,21 @@ class Computer
       end
       valid
     end
+  end
+
+  def place_smart_shot
+    last_shot = @shot_history.last
+    next_shot(down(last_shot))
+  end
+
+  def next
+    
+  end
+
+  def down(last_shot)
+    letter, number = last_shot.split("")
+    next_letter = LETTER[LETTERS.index(letter) + 1]
+    # HOW DO WE KEEP TRACK OF LAST SUCCESSFUL HIT
   end
 
   def add_to_ships(*ships_coordinates)
