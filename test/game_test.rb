@@ -191,27 +191,32 @@ class GameTest < Minitest::Test
 
   def test_it_calls_other_methods_when_placing_player_shot_hit
     @game.watson.board.board_info[:A][1] = "\u{25CF}"
+    @game.watson.ships << {A1: false, A2: false}
 
-    mocked_update_board = MiniTest::Mock.new
-    mocked_update_ships = MiniTest::Mock.new
-    mocked_give_feedback = MiniTest::Mock.new
+    mocked_convert_to_letter_and_number = MiniTest::Mock.new
+    mocked_check_for_boat_hit = MiniTest::Mock.new
+    mocked_process_boat_hit = MiniTest::Mock.new
+    mocked_update_output = MiniTest::Mock.new
 
-    mocked_update_board.expect(:call, nil,[:A, 2, true, @game])
-    mocked_update_board.expect(:call, nil,[:A, 2, true, @game.watson])
-    mocked_update_ships.expect(:call, false,["A2", @game.watson])
-    mocked_give_feedback.expect(:call, nil,[true, "A2", false])
-    @game.stub :update_board, mocked_update_board do
-      @game.stub :update_ships, mocked_update_ships do
-        @game.stub :give_feedback, mocked_give_feedback do
-          @game.place_shot('A2', @game.watson)
+    mocked_convert_to_letter_and_number.expect(:call, [:A, 2],["A2"])
+    mocked_check_for_boat_hit.expect(:call, true,[:A, 2, @game.watson])
+    mocked_process_boat_hit.expect(:call, 2,["A2", @game.watson])
+    mocked_update_output.expect(:call, nil,[:A, 2, true, @game.watson, 2, "A2"])
+
+    @game.stub :convert_to_letter_and_number, mocked_convert_to_letter_and_number do
+      @game.stub :check_for_boat_hit, mocked_check_for_boat_hit do
+        @game.stub :process_boat_hit, mocked_process_boat_hit do
+          @game.stub :update_output, mocked_update_output do
+            @game.place_shot('A2', @game.watson)
+          end
         end
       end
     end
 
-    mocked_update_board.verify
-    mocked_update_board.verify
-    mocked_update_ships.verify
-    mocked_give_feedback.verify
+    mocked_convert_to_letter_and_number.verify
+    mocked_check_for_boat_hit.verify
+    mocked_process_boat_hit.verify
+    mocked_update_output.verify
   end
 
   def test_it_calls_other_methods_when_placing_player_shot_miss
@@ -377,5 +382,18 @@ class GameTest < Minitest::Test
     expected = ["A1", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "D1", "D2", "D3", "D4"]
 
     assert_equal expected, result
+  end
+
+  def test_it_updates_computer_when_a_succesful_shot_was_placed
+    @game = Game.new
+
+    @game.player.ships << {A3: false, A4: false}
+    @game.player.board.board_info[:A][2] = "\u{25CF}"
+
+    result, stdout, stderr = OStreamCatcher.catch do
+      assert @game.place_shot("A3", @game.player)
+    end
+
+    assert_equal "A3", @game.watson.successful_shot
   end
 end

@@ -73,6 +73,8 @@ class Game
   def computer_shot_sequence
     valid_shots = find_valid_shot_positions
     shot = valid_shots.shuffle[0]
+    smart_shot = @watson.place_smart_shot(valid_shots) if @watson.successful_shot
+    shot = smart_shot if smart_shot
     place_shot(shot, @player)
     add_to_shot_history(shot, @watson)
     render_new_board(@player)
@@ -80,18 +82,39 @@ class Game
   end
 
   def place_shot(shot, opponent)
+    letter, number = convert_to_letter_and_number(shot)
+    boat_hit = check_for_boat_hit(letter, number, opponent)
+
+    sunk_boat_length = process_boat_hit(shot, opponent) if boat_hit
+
+    update_output(letter, number, boat_hit, opponent, sunk_boat_length, shot)
+    boat_hit
+  end
+
+  def update_output(letter, number, boat_hit, opponent, sunk_boat_length, shot)
+    update_board(letter, number, boat_hit, self) if opponent == @watson
+    update_board(letter, number, boat_hit, opponent)
+    give_feedback(boat_hit, shot, sunk_boat_length)
+  end
+
+  def process_boat_hit(shot, opponent)
+    @watson.successful_shot = shot if opponent == @player
+    sunk_boat_length = update_ships(shot, opponent)
+    @watson.successful_shot = false if sunk_boat_length && opponent == @player
+    sunk_boat_length
+  end
+
+  def check_for_boat_hit(letter, number, opponent)
+    coordinate = opponent.board.board_info[letter][number - 1]
+    coordinate == "\u{25CF}"
+  end
+
+  def convert_to_letter_and_number(shot)
     letter, number = shot.split('')
     letter = letter.upcase.to_sym
     number = number.to_i
 
-    coordinate = opponent.board.board_info[letter][number - 1]
-    boat_hit = coordinate == "\u{25CF}"
-
-    sunk_boat_length = boat_hit ? update_ships(shot, opponent) : nil
-
-    update_board(letter, number, boat_hit, self) if opponent == @watson
-    update_board(letter, number, boat_hit, opponent)
-    give_feedback(boat_hit, shot, sunk_boat_length)
+    return letter, number
   end
 
   def add_to_shot_history(shot, owner)
@@ -196,6 +219,6 @@ class Game
 
     min = minutes + 1
     sec = seconds - 60
-    convert_seconds(min, sec)
+    convert_seconds(sec, min)
   end
 end
