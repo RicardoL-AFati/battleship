@@ -56,19 +56,10 @@ class Computer
         letter = LETTERS[letter_start_index += 1]
         coordinate = "#{letter}#{number}"
       end
-      return false if not valid_positions.include?(coordinate)
+      return false if not included_in_valid_positions?(coordinate, valid_positions)
       coordinates << coordinate
     end
     coordinates
-  end
-
-  def find_valid_positions
-    @board.board_info.reduce([]) do |valid, (row,spots)|
-      spots.each_with_index do |spot, index|
-        valid << "#{row}#{index + 1}" if spot == " "
-      end
-      valid
-    end
   end
 
   def get_valid_starts_for_horizontal_ship(ship_length, valid_positions)
@@ -92,6 +83,15 @@ class Computer
         ship
       end
       @ships << ship
+    end
+  end
+
+  def find_valid_positions
+    @board.board_info.reduce([]) do |valid, (row,spots)|
+      spots.each_with_index do |spot, index|
+        valid << "#{row}#{index + 1}" if spot == " "
+      end
+      valid
     end
   end
 
@@ -125,20 +125,24 @@ class Computer
 
   def down(valid_positions)
     letter, number = successful_shot.split("")
+
     valid_next_letter = LETTERS[LETTERS.index(letter) + 1]
     return false if not valid_next_letter
-    valid_shot = valid_positions.include?("#{valid_next_letter}#{number}")
-    return false if not valid_shot
-    "#{valid_next_letter}#{number}"
+
+    shot = "#{valid_next_letter}#{number}"
+    return false if not included_in_valid_positions?(shot, valid_positions)
+    shot
   end
 
   def right(valid_positions)
     letter, number = successful_shot.split("")
+
     number = number.to_i + 1
     return false if number > 4
-    valid_shot = valid_positions.include?("#{letter}#{number}")
-    return false if not valid_shot
-    "#{letter}#{number}"
+
+    shot = "#{letter}#{number}"
+    return false if not included_in_valid_positions?(shot, valid_positions)
+    shot
   end
 
   def up(valid_positions)
@@ -159,7 +163,7 @@ class Computer
     "#{letter}#{number}"
   end
 
-  def included_in_valid_positions?(shot, valid_positions)
-
+  def included_in_valid_positions?(coordinate, valid_positions)
+    valid_positions.include?(coordinate)
   end
 end
