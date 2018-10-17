@@ -17,6 +17,25 @@ class PlayerTest < Minitest::Test
     assert_instance_of Board, @player.board
   end
 
+  def test_it_calls_other_methods_when_placing_ship
+    mocked_create_ship = Minitest::Mock.new
+    mocked_add_to_ships = MiniTest::Mock.new
+
+    coordinates = 'A2 A3'
+
+    mocked_create_ship.expect(:call, nil, [coordinates])
+    mocked_add_to_ships.expect(:call, nil, [coordinates])
+
+    @board.stub :create_ship, mocked_create_ship do
+      @player.stub :add_to_ships, mocked_add_to_ships do
+        @player.place_ship(coordinates)
+      end
+    end
+
+    mocked_create_ship.verify
+    mocked_add_to_ships.verify
+  end
+
   def test_it_gets_valid_player_shot
     io = StringIO.new
     io.puts "A1"
