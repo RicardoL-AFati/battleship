@@ -37,15 +37,9 @@ class Computer
 
   def generate_start_coordinate(direction, ship_length, valid_positions)
      if direction == :H
-       coordinates = valid_positions.select do |position|
-         letter, number = position.split('')
-         number.to_i <= (@board.size - ship_length) + 1
-       end
+       coordinates = get_valid_starts_for_horizontal_ship(ship_length, valid_positions)
      else
-       coordinates = valid_positions.select do |position|
-         letter, number = position.split('')
-         LETTERS[0..(@board.size - ship_length)].include?(letter)
-       end
+       coordinates = get_valid_starts_for_vertical_ship(ship_length, valid_positions)
      end
      letter, number = coordinates[rand(coordinates.count)].split("")
      return letter, number.to_i
@@ -74,6 +68,30 @@ class Computer
         valid << "#{row}#{index + 1}" if spot == " "
       end
       valid
+    end
+  end
+
+  def get_valid_starts_for_horizontal_ship(ship_length, valid_positions)
+    valid_positions.select do |position|
+      letter, number = position.split('')
+      number.to_i <= (@board.size - ship_length) + 1
+    end
+  end
+
+  def get_valid_starts_for_vertical_ship(ship_length, valid_positions)
+    valid_positions.select do |position|
+      letter, number = position.split('')
+      LETTERS[0..(@board.size - ship_length)].include?(letter)
+    end
+  end
+
+  def add_to_ships(*ships_coordinates)
+    ships_coordinates.each do |ship_coordinates|
+      ship = ship_coordinates.reduce({}) do |ship, coordinate|
+        ship[coordinate.to_sym] = false
+        ship
+      end
+      @ships << ship
     end
   end
 
@@ -138,15 +156,5 @@ class Computer
     valid_shot = valid_positions.include?("#{letter}#{number}")
     return false if not valid_shot
     "#{letter}#{number}"
-  end
-
-  def add_to_ships(*ships_coordinates)
-    ships_coordinates.each do |ship_coordinates|
-      ship = ship_coordinates.reduce({}) do |ship, coordinate|
-        ship[coordinate.to_sym] = false
-        ship
-      end
-      @ships << ship
-    end
   end
 end
