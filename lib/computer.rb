@@ -147,20 +147,24 @@ class Computer
 
   def up(valid_positions)
     letter, number = successful_shot.split("")
+
     return false if LETTERS.index(letter) - 1 < 0
     valid_next_letter = LETTERS[LETTERS.index(letter) - 1]
-    valid_shot = valid_positions.include?("#{valid_next_letter}#{number}")
-    return false if not valid_shot
-    "#{valid_next_letter}#{number}"
+
+    shot = "#{valid_next_letter}#{number}"
+    return false if not included_in_valid_positions?(shot, valid_positions)
+    shot
   end
 
   def left(valid_positions)
     letter, number = successful_shot.split("")
+
     number = number.to_i - 1
     return false if number < 1
-    valid_shot = valid_positions.include?("#{letter}#{number}")
-    return false if not valid_shot
-    "#{letter}#{number}"
+
+    shot = "#{letter}#{number}"
+    return false if not included_in_valid_positions?(shot, valid_positions)
+    shot
   end
 
   def included_in_valid_positions?(coordinate, valid_positions)
