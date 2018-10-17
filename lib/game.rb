@@ -91,6 +91,35 @@ class Game
     boat_hit
   end
 
+  def add_to_shot_history(shot, owner)
+    owner.shot_history << shot
+  end
+
+  def render_new_board(owner)
+    new_board = create_board(owner)
+    title = owner == @player ? Prompts::PLAYER_BOARD : Prompts::PLAYER_SHOTS
+    print "#{title}#{Prompts::TOP}#{new_board}#{Prompts::BOTTOM}"
+    new_board
+  end
+
+  def all_ships_sunk?(owner)
+    owner.ships.reduce(true) do |game_over, ship|
+      game_over = false if ship.values.include?(false)
+      game_over
+    end
+  end
+
+  def create_board(owner)
+    owner.board.board_info.reduce("") do |board_string, (row_name, columns)|
+      printable_row = columns.reduce("") do |row_string, spot|
+        row_string += "#{spot} "
+        row_string
+      end
+      board_string += "#{row_name.to_s} #{printable_row} \n"
+      board_string
+    end
+  end
+
   def update_output(letter, number, boat_hit, opponent, sunk_boat_length, shot)
     update_board(letter, number, boat_hit, self) if opponent == @watson
     update_board(letter, number, boat_hit, opponent)
@@ -117,16 +146,9 @@ class Game
     return letter, number
   end
 
-  def add_to_shot_history(shot, owner)
-    owner.shot_history << shot
-  end
-
   def give_feedback(boat_hit, shot, sunk_boat_length)
-    if boat_hit
-      puts Prompts::BOAT_HIT % shot
-    else
-      puts Prompts::BOAT_MISS % shot
-    end
+    boat_status = boat_hit ? Prompts::BOAT_HIT : Prompts::BOAT_MISS
+    puts boat_status % shot
     puts Prompts::SUNK_BOAT % sunk_boat_length if sunk_boat_length
   end
 
@@ -151,20 +173,6 @@ class Game
     Prompts.print_empty_board
   end
 
-  def render_new_board(owner)
-    new_board = owner.board.board_info.reduce("") do |board_string, (row_name, columns)|
-      printable_row = columns.reduce("") do |row_string, spot|
-        row_string += "#{spot} "
-        row_string
-      end
-      board_string += "#{row_name.to_s} #{printable_row} \n"
-      board_string
-    end
-    title = owner == @player ? Prompts::PLAYER_BOARD : Prompts::PLAYER_SHOTS
-    print "#{title}#{Prompts::TOP}#{new_board}#{Prompts::BOTTOM}"
-    new_board
-  end
-
   def find_valid_shot_positions
     @player.board.board_info.reduce([]) do |valid, (row,spots)|
       spots.each_with_index do |spot, index|
@@ -174,23 +182,14 @@ class Game
     end
   end
 
-  def all_ships_sunk?(owner)
-    owner.ships.reduce(true) do |game_over, ship|
-      game_over = false if ship.values.include?(false)
-      game_over
-    end
-  end
-
   def sunk_boat?(shot, owner)
     hit_ship_index = owner.ships.find_index do |ship|
       ship.keys.include?(shot.upcase.to_sym)
     end
-
     sunk = owner.ships[hit_ship_index].reduce(true) do |sunk, (coordinate, hit)|
       sunk = false if not hit
       sunk
     end
-
     return false if not sunk
     owner.ships[hit_ship_index].length
   end

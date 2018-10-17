@@ -43,8 +43,8 @@ class Player
     return false if not choice_list.length == length
 
     valid_coordinates = get_final_coordinates_if_valid(choice_list)
-
     return false if not valid_coordinates
+
     valid_coordinates
   end
 
@@ -58,7 +58,7 @@ class Player
     return false if not on_board
     doesnt_overlap = valid_against_previous_placement?(choice_list)
     consecutive = consecutive_coordinates?(choice_list)
-    final = doesnt_overlap && consecutive ? choice_list : false
+    doesnt_overlap && consecutive ? choice_list : false
   end
 
   def valid_against_board?(choice_list)
@@ -80,22 +80,18 @@ class Player
   end
 
   def coord_inside_board?(coord)
-    is_valid = true
     letter, number = coord.split("")
     valid_letter = LETTERS.include?(letter)
     valid_number = number.to_i <= 4
 
-    unless valid_letter && valid_number
-      is_valid = false
-    end
-    is_valid
+    valid_letter && valid_number
   end
 
   def coord_on_board_is_empty?(coord)
     letter, number = coord.split("")
     letter = letter.upcase.to_sym
     number = number.to_i
-    valid = @board.board_info[letter][number - 1] == " "
+    @board.board_info[letter][number - 1] == " "
   end
 
   def consecutive_coordinates?(coordinates)
@@ -115,11 +111,10 @@ class Player
 
   def add_to_ships(*ships_coordinates)
     ships_coordinates.each do |ship_coordinates|
-      ship = ship_coordinates.reduce({}) do |ship, coordinate|
+      @ships << ship_coordinates.reduce({}) do |ship, coordinate|
         ship[coordinate.to_sym] = false
         ship
       end
-      @ships << ship
     end
   end
 end
