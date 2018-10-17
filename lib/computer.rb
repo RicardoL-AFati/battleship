@@ -97,28 +97,29 @@ class Computer
 
   def place_smart_shot(valid_positions)
     valid_shot = nil
+
     until valid_shot
-      if ai_shot_count == 0
-        valid_shot = down(valid_positions)
-        return valid_shot if valid_shot
-        @ai_shot_count += 1
-      elsif ai_shot_count == 1
-        valid_shot = right(valid_positions)
-        return valid_shot if valid_shot
-        @ai_shot_count += 1
-      elsif ai_shot_count == 2
-        valid_shot = up(valid_positions)
-        return valid_shot if valid_shot
-        @ai_shot_count += 1
-      else
-        valid_shot = left(valid_positions)
-        return valid_shot if valid_shot
-        @ai_shot_count = 0
-        @successful_shot = false
-        break
+      case ai_shot_count
+        when 0
+          valid_shot = down(valid_positions)
+          return valid_shot if valid_shot
+          @ai_shot_count += 1
+        when 1
+          valid_shot = right(valid_positions)
+          return valid_shot if valid_shot
+          @ai_shot_count += 1
+        when 2
+          valid_shot = up(valid_positions)
+          return valid_shot if valid_shot
+          @ai_shot_count += 1
+        else
+          valid_shot = left(valid_positions)
+          return valid_shot if valid_shot
+          @ai_shot_count = 0
+          @successful_shot = false
+          break
       end
     end
-
     valid_shot
   end
 
@@ -156,5 +157,9 @@ class Computer
     valid_shot = valid_positions.include?("#{letter}#{number}")
     return false if not valid_shot
     "#{letter}#{number}"
+  end
+
+  def included_in_valid_positions?(shot, valid_positions)
+
   end
 end

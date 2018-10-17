@@ -3,6 +3,7 @@ class Board
   attr_accessor :board_info
   def initialize
     @owner = nil
+    @size = 4
     @board_info = {
       A: [' ',' ',' '," "],
       B: [' ',' ',' ',' '],
