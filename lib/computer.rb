@@ -37,15 +37,9 @@ class Computer
 
   def generate_start_coordinate(direction, ship_length, valid_positions)
      if direction == :H
-       coordinates = valid_positions.select do |position|
-         letter, number = position.split('')
-         number.to_i <= (@board.size - ship_length) + 1
-       end
+       coordinates = get_valid_starts_for_horizontal_ship(ship_length, valid_positions)
      else
-       coordinates = valid_positions.select do |position|
-         letter, number = position.split('')
-         LETTERS[0..(@board.size - ship_length)].include?(letter)
-       end
+       coordinates = get_valid_starts_for_vertical_ship(ship_length, valid_positions)
      end
      letter, number = coordinates[rand(coordinates.count)].split("")
      return letter, number.to_i
@@ -62,10 +56,34 @@ class Computer
         letter = LETTERS[letter_start_index += 1]
         coordinate = "#{letter}#{number}"
       end
-      return false if not valid_positions.include?(coordinate)
+      return false if not included_in_valid_positions?(coordinate, valid_positions)
       coordinates << coordinate
     end
     coordinates
+  end
+
+  def get_valid_starts_for_horizontal_ship(ship_length, valid_positions)
+    valid_positions.select do |position|
+      letter, number = position.split('')
+      number.to_i <= (@board.size - ship_length) + 1
+    end
+  end
+
+  def get_valid_starts_for_vertical_ship(ship_length, valid_positions)
+    valid_positions.select do |position|
+      letter, number = position.split('')
+      LETTERS[0..(@board.size - ship_length)].include?(letter)
+    end
+  end
+
+  def add_to_ships(*ships_coordinates)
+    ships_coordinates.each do |ship_coordinates|
+      ship = ship_coordinates.reduce({}) do |ship, coordinate|
+        ship[coordinate.to_sym] = false
+        ship
+      end
+      @ships << ship
+    end
   end
 
   def find_valid_positions
@@ -79,47 +97,52 @@ class Computer
 
   def place_smart_shot(valid_positions)
     valid_shot = nil
+
     until valid_shot
-      if ai_shot_count == 0
-        valid_shot = down(valid_positions)
-        return valid_shot if valid_shot
-        @ai_shot_count += 1
-      elsif ai_shot_count == 1
-        valid_shot = right(valid_positions)
-        return valid_shot if valid_shot
-        @ai_shot_count += 1
-      elsif ai_shot_count == 2
-        valid_shot = up(valid_positions)
-        return valid_shot if valid_shot
-        @ai_shot_count += 1
-      else
-        valid_shot = left(valid_positions)
-        return valid_shot if valid_shot
-        @ai_shot_count = 0
-        @successful_shot = false
-        break
+      case ai_shot_count
+        when 0
+          valid_shot = down(valid_positions)
+          return valid_shot if valid_shot
+          @ai_shot_count += 1
+        when 1
+          valid_shot = right(valid_positions)
+          return valid_shot if valid_shot
+          @ai_shot_count += 1
+        when 2
+          valid_shot = up(valid_positions)
+          return valid_shot if valid_shot
+          @ai_shot_count += 1
+        else
+          valid_shot = left(valid_positions)
+          return valid_shot if valid_shot
+          @ai_shot_count = 0
+          @successful_shot = false
+          break
       end
     end
-
     valid_shot
   end
 
   def down(valid_positions)
     letter, number = successful_shot.split("")
+
     valid_next_letter = LETTERS[LETTERS.index(letter) + 1]
     return false if not valid_next_letter
-    valid_shot = valid_positions.include?("#{valid_next_letter}#{number}")
-    return false if not valid_shot
-    "#{valid_next_letter}#{number}"
+
+    shot = "#{valid_next_letter}#{number}"
+    return false if not included_in_valid_positions?(shot, valid_positions)
+    shot
   end
 
   def right(valid_positions)
     letter, number = successful_shot.split("")
+
     number = number.to_i + 1
     return false if number > 4
-    valid_shot = valid_positions.include?("#{letter}#{number}")
-    return false if not valid_shot
-    "#{letter}#{number}"
+
+    shot = "#{letter}#{number}"
+    return false if not included_in_valid_positions?(shot, valid_positions)
+    shot
   end
 
   def up(valid_positions)
@@ -140,13 +163,7 @@ class Computer
     "#{letter}#{number}"
   end
 
-  def add_to_ships(*ships_coordinates)
-    ships_coordinates.each do |ship_coordinates|
-      ship = ship_coordinates.reduce({}) do |ship, coordinate|
-        ship[coordinate.to_sym] = false
-        ship
-      end
-      @ships << ship
-    end
+  def included_in_valid_positions?(coordinate, valid_positions)
+    valid_positions.include?(coordinate)
   end
 end
