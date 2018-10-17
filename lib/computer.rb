@@ -79,26 +79,21 @@ class Computer
 
   def place_smart_shot(valid_positions)
     valid_shot = nil
-    puts "successful_shot: #{@successful_shot}"
     until valid_shot
       if ai_shot_count == 0
         valid_shot = down(valid_positions)
-        puts "valid_shot: #{valid_shot} shot_count: #{ai_shot_count}" if valid_shot
         return valid_shot if valid_shot
         @ai_shot_count += 1
       elsif ai_shot_count == 1
         valid_shot = right(valid_positions)
-        puts "valid_shot: #{valid_shot} shot_count: #{ai_shot_count}" if valid_shot
         return valid_shot if valid_shot
         @ai_shot_count += 1
       elsif ai_shot_count == 2
         valid_shot = up(valid_positions)
-        puts "valid_shot: #{valid_shot} shot_count: #{ai_shot_count}" if valid_shot
         return valid_shot if valid_shot
         @ai_shot_count += 1
       else
         valid_shot = left(valid_positions)
-        puts "valid_shot: #{valid_shot} shot_count: #{ai_shot_count}" if valid_shot
         return valid_shot if valid_shot
         @ai_shot_count = 0
         @successful_shot = false
